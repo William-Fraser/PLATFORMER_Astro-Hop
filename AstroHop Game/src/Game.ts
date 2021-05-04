@@ -6,6 +6,7 @@ import "createjs";
 // importing game constants
 import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Constants";
 import AssetManager from "./AssetManager";
+import Player from "./Player";
 
 // game variables
 let stage:createjs.StageGL;
@@ -15,15 +16,21 @@ let canvas:HTMLCanvasElement;
 let assetManager:AssetManager;
 
 // game objects
-// ...
+let background:createjs.Sprite;
+let spaceMan:Player;
 
 // --------------------------------------------------- event handlers
 function onReady(e:createjs.Event):void {
     console.log(">> adding sprites to game");
     
     // construct game object sprites
-    // ...  
+    background = assetManager.getSprite("assets", "_600x260Grass_", 0, 0);
+    background.play();
+    background.scaleY = 2;
+    stage.addChild(background);
 
+    spaceMan = new Player(stage, assetManager);
+    
     // startup the ticker
     createjs.Ticker.framerate = FRAME_RATE;
     createjs.Ticker.on("tick", onTick);        
@@ -35,7 +42,7 @@ function onTick(e:createjs.Event):void {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
 
     // This is your game loop :)
-    // ...
+    spaceMan.Update();
 
     // update the stage!
     stage.update();
@@ -53,10 +60,12 @@ function main():void {
 
     // create stage object
     stage = new createjs.StageGL(canvas, { antialias: true });
+    stage.enableMouseOver(10);
 
     // AssetManager setup
     assetManager = new AssetManager(stage);
     stage.on("allAssetsLoaded", onReady, null, true);
+
     // load the assets
     assetManager.loadAssets(ASSET_MANIFEST);    
 }
