@@ -10413,7 +10413,7 @@ class Player extends GameCharacter_1.default {
         this._direction = GameCharacter_1.DIRECTION.DOWN;
         this._movementSpeed = 1;
         this.stage.mouseMoveOutside = true;
-        this._sprite = assetManager.getSprite("assets", "idle", 0, 0);
+        this._sprite = assetManager.getSprite("assets", "Astronaught/AstronaughtColor", 0, 0);
         this._sprite.scaleX = 2;
         this._sprite.scaleY = 2;
         this._sprite.play();

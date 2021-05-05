@@ -27,7 +27,7 @@ export default class Player extends GameCharacter {
         this.stage.mouseMoveOutside = true;
         
         // instance Sprite, init animation [NEEDS ANIMATION \/\/\/\/\/]
-        this._sprite = assetManager.getSprite("assets", "idle", 0, 0);
+        this._sprite = assetManager.getSprite("assets", "Astronaught/AstronaughtColor", 0, 0);
         this._sprite.scaleX = 2;
         this._sprite.scaleY = 2; /// {create a scale me method you bozo}  (o:>-o   <-- its a clown
         this._sprite.play();
