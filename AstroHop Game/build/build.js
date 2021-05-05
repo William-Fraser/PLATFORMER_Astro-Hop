@@ -10178,10 +10178,15 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASSET_MANIFEST = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
+exports.ASSET_MANIFEST = exports.ITEM_MOONSHOE_WEIGHT = exports.ITEM_MOONSHOE_GRAVITY = exports.PLAYER_GRAVITYDEFAULT = exports.PLAYER_WEIGHTDEFAULT = exports.PLAYER_POWER = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
 exports.STAGE_WIDTH = 400;
 exports.STAGE_HEIGHT = 600;
 exports.FRAME_RATE = 30;
+exports.PLAYER_POWER = 17;
+exports.PLAYER_WEIGHTDEFAULT = 0.7;
+exports.PLAYER_GRAVITYDEFAULT = 1.7;
+exports.ITEM_MOONSHOE_GRAVITY = 0.2;
+exports.ITEM_MOONSHOE_WEIGHT = 0.5;
 exports.ASSET_MANIFEST = [
     {
         type: "json",
@@ -10401,11 +10406,12 @@ const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCh
 class Player extends GameCharacter_1.default {
     constructor(stage, assetManager) {
         super(stage, assetManager);
+        this._timeToJump = false;
+        this._jumpPower = Constants_1.PLAYER_POWER;
+        this._jumpWeight = Constants_1.PLAYER_WEIGHTDEFAULT;
+        this._fallingGravity = Constants_1.PLAYER_GRAVITYDEFAULT;
         this._direction = GameCharacter_1.DIRECTION.DOWN;
         this._movementSpeed = 1;
-        this._jumpPower = 17;
-        this._jumpWeight = 0.7;
-        this._fallingGravity = 1.7;
         this.stage.mouseMoveOutside = true;
         this._sprite = assetManager.getSprite("assets", "idle", 0, 0);
         this._sprite.scaleX = 2;
@@ -10417,10 +10423,10 @@ class Player extends GameCharacter_1.default {
         });
         this.positionMe(Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2);
     }
-    Jump() {
-        if (this._onPlatform) {
+    JumpOffPlatform() {
+        if (this._timeToJump) {
             this._movementSpeed = this._jumpPower;
-            this._onPlatform = false;
+            this._timeToJump = false;
         }
         this._sprite.y -= this._movementSpeed;
         this._movementSpeed -= this._jumpWeight;
@@ -10428,18 +10434,34 @@ class Player extends GameCharacter_1.default {
             this._direction = GameCharacter_1.DIRECTION.DOWN;
         }
     }
+    Fall() {
+        this._sprite.y += this._movementSpeed;
+        this._movementSpeed += this._fallingGravity;
+    }
+    detectEdges() {
+        if (this._sprite.x <= this._sprite.getBounds().width) {
+            this._sprite.x = this._sprite.getBounds().width;
+        }
+        else if (this._sprite.x >= (Constants_1.STAGE_WIDTH - this._sprite.getBounds().width)) {
+            this._sprite.x = (Constants_1.STAGE_WIDTH - this._sprite.getBounds().width);
+        }
+    }
+    detectPlatform() {
+        if (this._sprite.y > 450) {
+            this._timeToJump = true;
+            this._direction = GameCharacter_1.DIRECTION.UP;
+            console.log("this reaches the ground " + (Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2));
+        }
+    }
     Update() {
         if (this._direction == GameCharacter_1.DIRECTION.UP) {
-            this.Jump();
+            this.JumpOffPlatform();
         }
         if (this._direction == GameCharacter_1.DIRECTION.DOWN) {
-            this._sprite.y += this._movementSpeed;
-            this._movementSpeed += this._fallingGravity;
-            if (this._sprite.y > 450) {
-                this._direction = GameCharacter_1.DIRECTION.UP;
-                console.log("this reaches the ground " + (Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2));
-            }
+            this.Fall();
         }
+        this.detectEdges();
+        this.detectPlatform();
     }
 }
 exports.default = Player;
@@ -10454,7 +10476,7 @@ exports.default = Player;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\jumpy\OneDrive\Scripting\.vscode\ts\AstroHop\AstroHop src\node_modules\webpack-dev-server\client\index.js?http://localhost:5005 */"./node_modules/webpack-dev-server/client/index.js?http://localhost:5005");
+__webpack_require__(/*! C:\Users\jumpy\OneDrive\Scripting\.vscode\ts\AstroHop\AstroHop Game\node_modules\webpack-dev-server\client\index.js?http://localhost:5005 */"./node_modules/webpack-dev-server/client/index.js?http://localhost:5005");
 module.exports = __webpack_require__(/*! ./src/Game.ts */"./src/Game.ts");
 
 
