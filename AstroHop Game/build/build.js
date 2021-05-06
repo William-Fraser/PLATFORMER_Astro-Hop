@@ -10135,14 +10135,14 @@ class GameCharacter extends GameObject_1.default {
         this._movementSpeed = value;
     }
     killMe() {
-        if ((this._state == GameObject_1.STATE.DYING) || (this._state == GameObject_1.STATE.DEAD)) {
+        if ((this._state == GameObject_1.STATE.DYING) || (this._state == GameObject_1.STATE.GONE)) {
             return;
         }
         this.idleMe();
         this._sprite.on("animationend", () => {
             this._sprite.stop();
             this.stage.removeChild(this._sprite);
-            this._state = GameObject_1.STATE.DEAD;
+            this._state = GameObject_1.STATE.GONE;
         });
     }
     Update() {
@@ -10282,6 +10282,7 @@ function onReady(e) {
     placeholderPlatforms[2].positionMe(100, 360);
     stage.addChild(spaceMan.sprite);
     this.stage.on("onPlatform", onPlatform);
+    this.stage.on("onPickup", onPickup);
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
     console.log(">> game ready");
@@ -10290,6 +10291,8 @@ function onPlatform(e) {
     spaceMan.Jumping = true;
     spaceMan.direction = GameCharacter_1.DIRECTION.UP;
     console.log(spaceMan.sprite.currentAnimation.toString + " hit a platform at;  X: " + spaceMan.sprite.x + ", Y: " + spaceMan.sprite.y);
+}
+function onPickup(e) {
 }
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
@@ -10505,7 +10508,7 @@ var STATE;
     STATE[STATE["ACTIVE"] = 1] = "ACTIVE";
     STATE[STATE["HURT"] = 2] = "HURT";
     STATE[STATE["DYING"] = 3] = "DYING";
-    STATE[STATE["DEAD"] = 4] = "DEAD";
+    STATE[STATE["GONE"] = 4] = "GONE";
 })(STATE = exports.STATE || (exports.STATE = {}));
 class GameObject {
     constructor(stage, assetManager) {

@@ -29,7 +29,29 @@
     [264, 525, 17, 32, 0, 8, 16],
     [283, 525, 14, 32, 0, 7, 16],
     [283, 525, 14, 32, 0, 7, 16],
-    [283, 525, 14, 32, 0, 7, 16]
+    [283, 525, 14, 32, 0, 7, 16],
+    [299, 525, 8, 13, 0, 4, 5],
+    [299, 525, 8, 13, 0, 4, 5],
+    [299, 525, 8, 13, 0, 4, 5],
+    [309, 525, 8, 13, 0, 4, 5],
+    [309, 525, 8, 13, 0, 4, 5],
+    [309, 525, 8, 13, 0, 4, 5],
+    [319, 525, 8, 13, 0, 4, 5],
+    [319, 525, 8, 13, 0, 4, 5],
+    [319, 525, 8, 13, 0, 4, 5],
+    [329, 525, 8, 13, 0, 4, 5],
+    [329, 525, 8, 13, 0, 4, 5],
+    [329, 525, 8, 13, 0, 4, 5],
+    [339, 525, 8, 13, 0, 4, 5],
+    [339, 525, 8, 13, 0, 4, 5],
+    [339, 525, 8, 13, 0, 4, 5],
+    [339, 525, 8, 13, 0, 4, 5],
+    [339, 525, 8, 13, 0, 4, 5],
+    [349, 525, 8, 13, 0, 4, 5],
+    [349, 525, 8, 13, 0, 4, 5],
+    [359, 525, 8, 13, 0, 4, 5],
+    [359, 525, 8, 13, 0, 4, 5],
+    [369, 525, 8, 13, 0, 4, 5]
 ],
 
 "animations": {
@@ -48,11 +70,12 @@
     "Astronaught/Astronaught side": { "frames": [13] },
     "Astronaught/Astronaught sidenoJetypackRunning2": { "frames": [14] },
     "Astronaught/Astronaught sidenoJetypackRunning4": { "frames": [17] },
-    "Astronaught/Astronaught": { "frames": [20] }
+    "Astronaught/Astronaught": { "frames": [20] },
+    "fireball/attack": { "frames": [24, 42, 44, 26, 39, 29, 32, 35, 40, 27, 30, 33, 36, 25, 41, 43, 37, 28, 31, 34, 38, 45] }
 },
 
 "texturepacker": [
-        "SmartUpdateHash: $TexturePacker:SmartUpdate:c69b939a4530f930a56cf8f6907a9ee6:ba920da530ca3a62a903e6d29551dc4a:a759b6bbc8381ac9c472b28f589ad0d6$",
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:d5ee5273389f81831ce2e6479fa2265a:d7bf415e6b32f04427dce1b9bd54776b:a759b6bbc8381ac9c472b28f589ad0d6$",
         "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
 ]
 

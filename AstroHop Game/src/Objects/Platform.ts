@@ -14,7 +14,7 @@ export default class Platform extends GameObject {
         //init event
         this.eventPlayerOnPlatform = new createjs.Event("onPlatform", true, false);
 
-        //create sprite
+        //create sprite // move to individual classes
         this._sprite = assetManager.getSprite("assets", spriteOrAnimation, PosX, PosY);
         this._sprite.play();
         stage.addChild(this._sprite);

@@ -5,7 +5,7 @@ export enum STATE {
     ACTIVE,
     HURT,
     DYING,
-    DEAD,
+    GONE,
 } 
 
 export default class GameObject {
@@ -24,8 +24,8 @@ export default class GameObject {
         this._state = STATE.IDLE;
         this.stage = stage;
 
-        // needs sprite initialization
-        // this._sprite = assetManager.getSprite("assets", "sprite/animation", 0, 0);
+       //child creates sprite
+        // this._sprite = assetManager.getSprite("assets", "spriteplaceholder", 0, 0);
         // this._sprite.play();
         // stage.addChild(this._sprite);
     }

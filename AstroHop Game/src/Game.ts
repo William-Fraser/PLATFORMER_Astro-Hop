@@ -52,18 +52,23 @@ function onReady(e:createjs.Event):void {
 
     //events
     this.stage.on("onPlatform", onPlatform);
+    this.stage.on("onPickup", onPickup);
 
     // startup the ticker
     createjs.Ticker.framerate = FRAME_RATE;
     createjs.Ticker.on("tick", onTick);        
     console.log(">> game ready");
 }
+//#region // Game Events
 function onPlatform(e:createjs.Event):void {
     spaceMan.Jumping = true;
     spaceMan.direction = DIRECTION.UP;
     console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y);
+}
+function onPickup(e:createjs.Event) {
     
 }
+//#endregion
 
 function onTick(e:createjs.Event):void {
     // TESTING FPS

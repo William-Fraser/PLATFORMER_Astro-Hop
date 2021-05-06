@@ -56,7 +56,7 @@
         <key>jxrCompressionLevel</key>
         <uint>0</uint>
         <key>ditherType</key>
-        <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
+        <enum type="SettingsBase::DitherType">PngQuantLow</enum>
         <key>backgroundColor</key>
         <uint>0</uint>
         <key>libGdx</key>
@@ -82,7 +82,7 @@
         <key>atfFormats</key>
         <string></string>
         <key>textureFormat</key>
-        <enum type="SettingsBase::TextureFormat">png</enum>
+        <enum type="SettingsBase::TextureFormat">png8</enum>
         <key>borderPadding</key>
         <uint>0</uint>
         <key>maxTextureSize</key>
@@ -181,18 +181,39 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_300x150Wood.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_1.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_10.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_11.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_12.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_13.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_14.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_15.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_16.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_17.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_18.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_19.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_2.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_20.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_21.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_22.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_3.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_4.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_5.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_6.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_7.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_8.png</key>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_9.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0</point_f>
+                <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>75,38,150,75</rect>
+                <rect>4,4,8,8</rect>
                 <key>scale9Paddings</key>
-                <rect>75,38,150,75</rect>
+                <rect>4,4,8,8</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -209,6 +230,21 @@
                 <rect>150,65,300,130</rect>
                 <key>scale9Paddings</key>
                 <rect>150,65,300,130</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/placeholderPlatform.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0,0</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9Paddings</key>
+                <rect>16,8,32,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -251,9 +287,10 @@
         <key>fileList</key>
         <array>
             <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_600x260Grass_.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_300x150Wood.png</filename>
             <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_600x2602DGrass&amp;NightSky.png</filename>
             <filename>Astronaught</filename>
+            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/placeholderPlatform.png</filename>
+            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

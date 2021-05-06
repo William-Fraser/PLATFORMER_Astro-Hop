@@ -45,13 +45,13 @@ export default class GameCharacter extends GameObject {
 
     // public methods
     public killMe():void {
-        if ((this._state == STATE.DYING)||(this._state == STATE.DEAD)) {return;}
+        if ((this._state == STATE.DYING)||(this._state == STATE.GONE)) {return;}
 
         this.idleMe();
         this._sprite.on("animationend", () => {
             this._sprite.stop();
             this.stage.removeChild(this._sprite);
-            this._state = STATE.DEAD;
+            this._state = STATE.GONE;
         });
         // NEEDS DEATH ANIMATION AFTER SUPER w\/
         //this._state = GameCharacter.STATE_DYING;
