@@ -10178,15 +10178,15 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASSET_MANIFEST = exports.ITEM_MOONSHOE_WEIGHT = exports.ITEM_MOONSHOE_GRAVITY = exports.PLAYER_GRAVITYDEFAULT = exports.PLAYER_WEIGHTDEFAULT = exports.PLAYER_POWER = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
+exports.ASSET_MANIFEST = exports.ITEM_MOONSHOE_GRAVITY = exports.ITEM_MOONSHOE_WEIGHT = exports.PLAYER_GRAVITYDEFAULT = exports.PLAYER_WEIGHTDEFAULT = exports.PLAYER_POWER = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
 exports.STAGE_WIDTH = 400;
 exports.STAGE_HEIGHT = 600;
 exports.FRAME_RATE = 30;
 exports.PLAYER_POWER = 17;
-exports.PLAYER_WEIGHTDEFAULT = 0.7;
-exports.PLAYER_GRAVITYDEFAULT = 1.7;
-exports.ITEM_MOONSHOE_GRAVITY = 0.2;
-exports.ITEM_MOONSHOE_WEIGHT = 0.5;
+exports.PLAYER_WEIGHTDEFAULT = 1.7;
+exports.PLAYER_GRAVITYDEFAULT = 0.9;
+exports.ITEM_MOONSHOE_WEIGHT = 0.2;
+exports.ITEM_MOONSHOE_GRAVITY = 0.5;
 exports.ASSET_MANIFEST = [
     {
         type: "json",
@@ -10217,6 +10217,7 @@ exports.ASSET_MANIFEST = [
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! createjs */ "./node_modules/createjs/builds/1.0.0/createjs.min.js");
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const AssetManager_1 = __webpack_require__(/*! ./AssetManager */ "./src/AssetManager.ts");
 const Player_1 = __webpack_require__(/*! ./Player */ "./src/Player.ts");
 const Platform_1 = __webpack_require__(/*! ./Platform */ "./src/Platform.ts");
@@ -10226,22 +10227,40 @@ let assetManager;
 let background;
 let spaceMan;
 let ground;
+let placeholderPlatforms;
 function onReady(e) {
     console.log(">> adding sprites to game");
     background = assetManager.getSprite("assets", "_600x260Grass__600x2602DGrass&amp;NightSky", 0, 0);
     background.scaleY = 3;
     stage.addChild(background);
     spaceMan = new Player_1.default(stage, assetManager);
-    ground = new Platform_1.default(stage, assetManager, spaceMan);
+    ground = new Platform_1.default(stage, assetManager, "_600x260Grass_", 0, 450);
+    placeholderPlatforms = new Array(3);
+    for (let i = 0; i < 3; i++) {
+        let platformMaker;
+        platformMaker = new Platform_1.default(stage, assetManager, "placeholderPlatform", 100, 170);
+        placeholderPlatforms[i] = platformMaker;
+    }
+    placeholderPlatforms[1].positionMe(250, 295);
+    placeholderPlatforms[2].positionMe(100, 360);
     stage.addChild(spaceMan.sprite);
+    this.stage.on("onPlatform", onPlatform);
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
     console.log(">> game ready");
+}
+function onPlatform(e) {
+    spaceMan.Jumping = true;
+    spaceMan.direction = GameCharacter_1.DIRECTION.UP;
+    console.log(spaceMan.sprite.currentAnimation.toString + " hit a platform at;  X: " + spaceMan.sprite.x + ", Y: " + spaceMan.sprite.y);
 }
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
     spaceMan.Update();
     ground.PlatformUpdate(spaceMan);
+    for (let i = 0; i < 3; i++) {
+        placeholderPlatforms[i].PlatformUpdate(spaceMan);
+    }
     stage.update();
 }
 function main() {
@@ -10406,32 +10425,27 @@ exports.default = GameObject;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const GameObject_1 = __webpack_require__(/*! ./GameObject */ "./src/GameObject.ts");
-const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const Toolkit_1 = __webpack_require__(/*! ./Toolkit */ "./src/Toolkit.ts");
 class Platform extends GameObject_1.default {
-    constructor(stage, assetManager, player) {
+    constructor(stage, assetManager, spriteOrAnimation, PosX, PosY) {
         super(stage, assetManager);
         this.eventPlayerOnPlatform = new createjs.Event("onPlatform", true, false);
-        this.stage.on("onPlatform", () => {
-            player.Jumping = true;
-            player.direction = GameCharacter_1.DIRECTION.UP;
-            console.log(player.sprite.currentAnimation.toString + " hit a platform at;  X: " + player.sprite.x + ", Y: " + player.sprite.y);
-        });
-        this._sprite = assetManager.getSprite("assets", "_600x260Grass_", 0, 450);
+        this._sprite = assetManager.getSprite("assets", spriteOrAnimation, PosX, PosY);
         this._sprite.play();
         stage.addChild(this._sprite);
     }
-    onPlatform(player) {
-        player.Jumping = true;
-        player.direction = GameCharacter_1.DIRECTION.UP;
-        console.log(player.sprite.currentAnimation.toString + " hit a platform at;  X: " + player.sprite.x + ", Y: " + player.sprite.y);
+    DetectPlayerLanding(player) {
+        if (Toolkit_1.pointHit(player.sprite, this._sprite, -6, 14) ||
+            Toolkit_1.pointHit(player.sprite, this._sprite, 6, 14) ||
+            Toolkit_1.pointHit(player.sprite, this._sprite, 0, 11) ||
+            Toolkit_1.pointHit(player.sprite, this._sprite, 0, 14)) {
+            this.stage.dispatchEvent(this.eventPlayerOnPlatform);
+        }
     }
     PlatformUpdate(player) {
         super.Update();
         if (!player.Jumping) {
-            if (Toolkit_1.boxHit(player.sprite, this._sprite)) {
-                this.stage.dispatchEvent(this.eventPlayerOnPlatform);
-            }
+            this.DetectPlayerLanding(player);
         }
     }
 }

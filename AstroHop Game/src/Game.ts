@@ -5,6 +5,7 @@
 import "createjs";
 // importing game constants
 import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Constants";
+import { DIRECTION } from "./GameCharacter"
 import AssetManager from "./AssetManager";
 import Player from "./Player";
 import Platform from "./Platform";
@@ -20,6 +21,7 @@ let assetManager:AssetManager;
 let background:createjs.Sprite;
 let spaceMan:Player;
 let ground:Platform;
+let placeholderPlatforms:Platform[];
 
 // --------------------------------------------------- event handlers
 function onReady(e:createjs.Event):void {
@@ -30,15 +32,37 @@ function onReady(e:createjs.Event):void {
     background.scaleY = 3;
     stage.addChild(background);
 
+    //#region // init Stage Objects
     spaceMan = new Player(stage, assetManager);
     
-    ground = new Platform(stage, assetManager, spaceMan)
+    ground = new Platform(stage, assetManager, "_600x260Grass_", 0, 450);
+    
+    placeholderPlatforms = new Array(3);
+
+    for (let i:number = 0; i < 3; i++){
+        let platformMaker:Platform;
+        platformMaker = new Platform(stage, assetManager, "placeholderPlatform", 100, 170);
+        placeholderPlatforms[i] = platformMaker;
+    }
+    placeholderPlatforms[1].positionMe(250, 295);
+    placeholderPlatforms[2].positionMe(100, 360);
+
     stage.addChild(spaceMan.sprite);
+    //#endregion
+
+    //events
+    this.stage.on("onPlatform", onPlatform);
 
     // startup the ticker
     createjs.Ticker.framerate = FRAME_RATE;
     createjs.Ticker.on("tick", onTick);        
     console.log(">> game ready");
+}
+function onPlatform(e:createjs.Event):void {
+    spaceMan.Jumping = true;
+    spaceMan.direction = DIRECTION.UP;
+    console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y);
+    
 }
 
 function onTick(e:createjs.Event):void {
@@ -48,6 +72,10 @@ function onTick(e:createjs.Event):void {
     // This is your game loop :)
     spaceMan.Update();
     ground.PlatformUpdate(spaceMan);
+
+    for (let i:number = 0; i < 3; i++){
+        placeholderPlatforms[i].PlatformUpdate(spaceMan);
+    }
 
     // update the stage!
     stage.update();
