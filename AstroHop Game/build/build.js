@@ -10223,13 +10223,16 @@ let stage;
 let canvas;
 let assetManager;
 let background;
+let fakeGround;
 let spaceMan;
 function onReady(e) {
     console.log(">> adding sprites to game");
-    background = assetManager.getSprite("assets", "_600x260Grass_", 0, 0);
-    background.play();
-    background.scaleY = 2;
+    background = assetManager.getSprite("assets", "_600x260Grass__600x2602DGrass&amp;NightSky", 0, 0);
+    background.scaleY = 3;
     stage.addChild(background);
+    fakeGround = assetManager.getSprite("assets", "_600x260Grass_", 0, 0);
+    fakeGround.x = 450;
+    stage.addChild(fakeGround);
     spaceMan = new Player_1.default(stage, assetManager);
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
@@ -10411,8 +10414,8 @@ class Player extends GameCharacter_1.default {
         this._jumpWeight = Constants_1.PLAYER_WEIGHTDEFAULT;
         this._fallingGravity = Constants_1.PLAYER_GRAVITYDEFAULT;
         this._direction = GameCharacter_1.DIRECTION.DOWN;
-        this._movementSpeed = 1;
         this.stage.mouseMoveOutside = true;
+        this._movementSpeed = 1;
         this._sprite = assetManager.getSprite("assets", "Astronaught/AstronaughtColor", 0, 0);
         this._sprite.scaleX = 2;
         this._sprite.scaleY = 2;
@@ -10423,6 +10426,10 @@ class Player extends GameCharacter_1.default {
         });
         this.positionMe(Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2);
     }
+    get Weight() { return this._jumpWeight; }
+    set Weight(value) { this._jumpWeight = value; }
+    get Gravity() { return this._fallingGravity; }
+    set Gravity(value) { this._fallingGravity = value; }
     JumpOffPlatform() {
         if (this._timeToJump) {
             this._movementSpeed = this._jumpPower;

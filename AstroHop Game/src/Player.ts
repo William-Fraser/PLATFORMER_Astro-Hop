@@ -1,8 +1,6 @@
 import AssetManager from "./AssetManager";
 import { PLAYER_GRAVITYDEFAULT as PLAYER_GRAVITY, PLAYER_POWER, PLAYER_WEIGHTDEFAULT as PLAYER_WEIGHT, STAGE_HEIGHT, STAGE_WIDTH } from "./Constants";
-import { STATE } from "./GameObject";
 import GameCharacter, { DIRECTION } from "./GameCharacter";
-import { debug } from "node:console";
  
 export default class Player extends GameCharacter {
 
@@ -23,8 +21,8 @@ export default class Player extends GameCharacter {
         
         // instance protected fields
         this._direction = DIRECTION.DOWN;
-        this._movementSpeed = 1; // starts at one and almost always changes
         this.stage.mouseMoveOutside = true;
+        this._movementSpeed = 1; // starts at one and almost always changes
         
         // instance Sprite, init animation [NEEDS ANIMATION \/\/\/\/\/]
         this._sprite = assetManager.getSprite("assets", "Astronaught/AstronaughtColor", 0, 0);
@@ -38,15 +36,19 @@ export default class Player extends GameCharacter {
 
             this._sprite.x = this.stage.mouseX; 
         });
-        //check mouse pos                      // debug // used to 
+        //check mouse pos                                                               // debug
         // this.stage.on("stagemousemove", () => {
-        //     console.log("stage X/Y : "+ this.stage.mouseX +" "+this.stage.mouseY ); // debug
+        //     console.log("stage X/Y : "+ this.stage.mouseX +" "+this.stage.mouseY );  // debug
         // });
 
         this.positionMe(STAGE_WIDTH/2, STAGE_HEIGHT/2+(STAGE_HEIGHT/2)/2); // sets 
     }
     
     // ----- gets/sets
+    get Weight():number { return this._jumpWeight; }
+    set Weight(value:number) { this._jumpWeight = value; }
+    get Gravity():number { return this._fallingGravity; }
+    set Gravity(value:number) { this._fallingGravity = value; }
 
     // ----- private methods
     private JumpOffPlatform() {

@@ -17,6 +17,7 @@ let assetManager:AssetManager;
 
 // game objects
 let background:createjs.Sprite;
+let fakeGround:createjs.Sprite;
 let spaceMan:Player;
 
 // --------------------------------------------------- event handlers
@@ -24,10 +25,13 @@ function onReady(e:createjs.Event):void {
     console.log(">> adding sprites to game");
     
     // construct game object sprites
-    background = assetManager.getSprite("assets", "_600x260Grass_", 0, 0);
-    background.play();
-    background.scaleY = 2;
+    background = assetManager.getSprite("assets", "_600x260Grass__600x2602DGrass&amp;NightSky", 0, 0);
+    background.scaleY = 3;
     stage.addChild(background);
+
+    fakeGround = assetManager.getSprite("assets", "_600x260Grass_", 0, 0);
+    fakeGround.x = 450;
+    stage.addChild(fakeGround);
 
     spaceMan = new Player(stage, assetManager);
     

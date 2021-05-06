@@ -153,7 +153,7 @@
         <key>trimSpriteNames</key>
         <false/>
         <key>prependSmartFolderName</key>
-        <false/>
+        <true/>
         <key>autodetectAnimations</key>
         <true/>
         <key>globalSpriteSettings</key>
@@ -181,6 +181,22 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_300x150Wood.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>75,38,150,75</rect>
+                <key>scale9Paddings</key>
+                <rect>75,38,150,75</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_600x2602DGrass&amp;NightSky.png</key>
             <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_600x260Grass_.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -196,46 +212,27 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_1.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_10.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_11.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_12.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_13.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_14.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_15.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_16.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_2.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_3.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_4.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_5.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_6.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_7.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_8.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_9.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_1.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_10.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_11.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_12.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_2.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_3.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_4.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_5.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_6.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_7.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_8.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_9.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_1.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_10.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_11.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_12.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_2.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_3.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_4.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_5.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_6.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_7.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_8.png</key>
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_9.png</key>
+            <key type="filename">Astronaught/Astronaught side.png</key>
+            <key type="filename">Astronaught/Astronaught sidenoJetypack.gif</key>
+            <key type="filename">Astronaught/Astronaught sidenoJetypack.png</key>
+            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning.gif</key>
+            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning1.png</key>
+            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning2.png</key>
+            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning3.png</key>
+            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning4.png</key>
+            <key type="filename">Astronaught/Astronaught.png</key>
+            <key type="filename">Astronaught/AstronaughtBack.png</key>
+            <key type="filename">Astronaught/AstronaughtBacknojetpack.png</key>
+            <key type="filename">Astronaught/AstronaughtColor.png</key>
+            <key type="filename">Astronaught/AstronaughtColorWithOutline.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_1.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_2.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_3.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_4.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_5.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_6.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_7.png</key>
+            <key type="filename">Astronaught/Run/sideRunningRight_8.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -254,46 +251,9 @@
         <key>fileList</key>
         <array>
             <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_600x260Grass_.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_10.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_11.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_12.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_13.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_14.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_15.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_16.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_5.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_6.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_7.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_8.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_9.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_1.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_10.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_11.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_12.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_2.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_3.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_4.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_5.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_6.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_7.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_8.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/left_9.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_1.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_10.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_11.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_12.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_2.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_3.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_4.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_5.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_6.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_7.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_8.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/right_9.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_1.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_2.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_3.png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Wizard/idle_4.png</filename>
+            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_300x150Wood.png</filename>
+            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/_600x2602DGrass&amp;NightSky.png</filename>
+            <filename>Astronaught</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
