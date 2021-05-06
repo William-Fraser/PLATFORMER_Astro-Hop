@@ -1,5 +1,5 @@
-import AssetManager from "./AssetManager";
-import { PLAYER_GRAVITYDEFAULT as PLAYER_GRAVITY, PLAYER_POWER, PLAYER_WEIGHTDEFAULT as PLAYER_WEIGHT, STAGE_HEIGHT, STAGE_WIDTH } from "./Constants";
+import AssetManager from "../Managers/AssetManager";
+import { PLAYER_GRAVITYDEFAULT as PLAYER_GRAVITY, PLAYER_POWER, PLAYER_WEIGHTDEFAULT as PLAYER_WEIGHT, STAGE_HEIGHT, STAGE_WIDTH } from "../Managers/Constants";
 import GameCharacter, { DIRECTION } from "./GameCharacter";
  
 export default class Player extends GameCharacter {

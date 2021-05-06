@@ -1,5 +1,5 @@
-import AssetManager from "./AssetManager";
-import GameObject, { STATE } from "./GameObject";
+import AssetManager from "../Managers/AssetManager";
+import GameObject, { STATE } from "../Objects/GameObject";
 
 export enum DIRECTION {
     NULL,

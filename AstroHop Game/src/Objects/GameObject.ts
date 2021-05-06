@@ -1,4 +1,4 @@
-import AssetManager from "./AssetManager";
+import AssetManager from "../Managers/AssetManager";
 
 export enum STATE {
     IDLE,

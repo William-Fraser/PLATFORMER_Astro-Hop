@@ -4,11 +4,11 @@
 // importing createjs framework
 import "createjs";
 // importing game constants
-import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Constants";
-import { DIRECTION } from "./GameCharacter"
-import AssetManager from "./AssetManager";
-import Player from "./Player";
-import Platform from "./Platform";
+import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Managers/Constants";
+import { DIRECTION } from "./Characters/GameCharacter"
+import AssetManager from "./Managers/AssetManager";
+import Player from "./Characters/Player";
+import Platform from "./Objects/Platform";
 
 // game variables
 let stage:createjs.StageGL;

@@ -1,7 +1,7 @@
-import AssetManager from "./AssetManager";
+import AssetManager from "../Managers/AssetManager";
 import GameObject from "./GameObject";
-import Player from "./Player";
-import { pointHit } from "./Toolkit";
+import Player from "../Characters/Player";
+import { pointHit } from "../Managers/Toolkit";
 
 export default class Platform extends GameObject {
 
