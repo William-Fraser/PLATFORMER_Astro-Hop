@@ -10219,21 +10219,21 @@ __webpack_require__(/*! createjs */ "./node_modules/createjs/builds/1.0.0/create
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const AssetManager_1 = __webpack_require__(/*! ./AssetManager */ "./src/AssetManager.ts");
 const Player_1 = __webpack_require__(/*! ./Player */ "./src/Player.ts");
+const Platform_1 = __webpack_require__(/*! ./Platform */ "./src/Platform.ts");
 let stage;
 let canvas;
 let assetManager;
 let background;
-let fakeGround;
 let spaceMan;
+let ground;
 function onReady(e) {
     console.log(">> adding sprites to game");
     background = assetManager.getSprite("assets", "_600x260Grass__600x2602DGrass&amp;NightSky", 0, 0);
     background.scaleY = 3;
     stage.addChild(background);
-    fakeGround = assetManager.getSprite("assets", "_600x260Grass_", 0, 0);
-    fakeGround.x = 450;
-    stage.addChild(fakeGround);
     spaceMan = new Player_1.default(stage, assetManager);
+    ground = new Platform_1.default(stage, assetManager, spaceMan);
+    stage.addChild(spaceMan.sprite);
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
     console.log(">> game ready");
@@ -10241,6 +10241,7 @@ function onReady(e) {
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
     spaceMan.Update();
+    ground.PlatformUpdate(spaceMan);
     stage.update();
 }
 function main() {
@@ -10312,7 +10313,7 @@ class GameCharacter extends GameObject_1.default {
             this._state = GameObject_1.STATE.DEAD;
         });
     }
-    update() {
+    Update() {
         let sprite = this._sprite;
         if (this._state == GameObject_1.STATE.IDLE) {
         }
@@ -10394,6 +10395,51 @@ exports.default = GameObject;
 
 /***/ }),
 
+/***/ "./src/Platform.ts":
+/*!*************************!*\
+  !*** ./src/Platform.ts ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const GameObject_1 = __webpack_require__(/*! ./GameObject */ "./src/GameObject.ts");
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
+const Toolkit_1 = __webpack_require__(/*! ./Toolkit */ "./src/Toolkit.ts");
+class Platform extends GameObject_1.default {
+    constructor(stage, assetManager, player) {
+        super(stage, assetManager);
+        this.eventPlayerOnPlatform = new createjs.Event("onPlatform", true, false);
+        this.stage.on("onPlatform", () => {
+            player.Jumping = true;
+            player.direction = GameCharacter_1.DIRECTION.UP;
+            console.log(player.sprite.currentAnimation.toString + " hit a platform at;  X: " + player.sprite.x + ", Y: " + player.sprite.y);
+        });
+        this._sprite = assetManager.getSprite("assets", "_600x260Grass_", 0, 450);
+        this._sprite.play();
+        stage.addChild(this._sprite);
+    }
+    onPlatform(player) {
+        player.Jumping = true;
+        player.direction = GameCharacter_1.DIRECTION.UP;
+        console.log(player.sprite.currentAnimation.toString + " hit a platform at;  X: " + player.sprite.x + ", Y: " + player.sprite.y);
+    }
+    PlatformUpdate(player) {
+        super.Update();
+        if (!player.Jumping) {
+            if (Toolkit_1.boxHit(player.sprite, this._sprite)) {
+                this.stage.dispatchEvent(this.eventPlayerOnPlatform);
+            }
+        }
+    }
+}
+exports.default = Platform;
+
+
+/***/ }),
+
 /***/ "./src/Player.ts":
 /*!***********************!*\
   !*** ./src/Player.ts ***!
@@ -10426,10 +10472,14 @@ class Player extends GameCharacter_1.default {
         });
         this.positionMe(Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2);
     }
-    get Weight() { return this._jumpWeight; }
-    set Weight(value) { this._jumpWeight = value; }
-    get Gravity() { return this._fallingGravity; }
-    set Gravity(value) { this._fallingGravity = value; }
+    get Jumping() { return this._timeToJump; }
+    set Jumping(value) { this._timeToJump = value; }
+    get power() { return this._jumpPower; }
+    set power(value) { this._jumpPower = value; }
+    get weight() { return this._jumpWeight; }
+    set weight(value) { this._jumpWeight = value; }
+    get gravity() { return this._fallingGravity; }
+    set gravity(value) { this._fallingGravity = value; }
     JumpOffPlatform() {
         if (this._timeToJump) {
             this._movementSpeed = this._jumpPower;
@@ -10453,25 +10503,76 @@ class Player extends GameCharacter_1.default {
             this._sprite.x = (Constants_1.STAGE_WIDTH - this._sprite.getBounds().width);
         }
     }
-    detectPlatform() {
-        if (this._sprite.y > 450) {
-            this._timeToJump = true;
-            this._direction = GameCharacter_1.DIRECTION.UP;
-            console.log("this reaches the ground " + (Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2));
-        }
-    }
     Update() {
+        this.detectEdges();
         if (this._direction == GameCharacter_1.DIRECTION.UP) {
             this.JumpOffPlatform();
         }
         if (this._direction == GameCharacter_1.DIRECTION.DOWN) {
             this.Fall();
         }
-        this.detectEdges();
-        this.detectPlatform();
     }
 }
 exports.default = Player;
+
+
+/***/ }),
+
+/***/ "./src/Toolkit.ts":
+/*!************************!*\
+  !*** ./src/Toolkit.ts ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.pointHit = exports.boxHit = exports.randomMe = void 0;
+function randomMe(low, high) {
+    let randomNum = 0;
+    randomNum = Math.floor(Math.random() * (high - low + 1)) + low;
+    return randomNum;
+}
+exports.randomMe = randomMe;
+function boxHit(sprite1, sprite2) {
+    let width1 = sprite1.getBounds().width;
+    let height1 = sprite1.getBounds().height;
+    let width2 = sprite2.getBounds().width;
+    let height2 = sprite2.getBounds().height;
+    if ((sprite1.x + width1 > sprite2.x) &&
+        (sprite1.y + height1 > sprite2.y) &&
+        (sprite1.x < sprite2.x + width2) &&
+        (sprite1.y < sprite2.y + height2)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.boxHit = boxHit;
+function pointHit(sprite1, sprite2, sprite1HitX = 0, sprite1HitY = 0, stage = null) {
+    if (stage != null) {
+        let markerPoint = sprite1.localToGlobal(sprite1HitX, sprite1HitY);
+        let marker = new createjs.Shape();
+        marker.graphics.beginFill("#FF00EC");
+        marker.graphics.drawRect(0, 0, 4, 4);
+        marker.regX = 2;
+        marker.regY = 2;
+        marker.x = markerPoint.x;
+        marker.y = markerPoint.y;
+        marker.cache(0, 0, 4, 4);
+        stage.addChild(marker);
+    }
+    let point = sprite1.localToLocal(sprite1HitX, sprite1HitY, sprite2);
+    if (sprite2.hitTest(point.x, point.y)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.pointHit = pointHit;
 
 
 /***/ }),

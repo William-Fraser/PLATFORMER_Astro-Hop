@@ -7,6 +7,7 @@ import "createjs";
 import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Constants";
 import AssetManager from "./AssetManager";
 import Player from "./Player";
+import Platform from "./Platform";
 
 // game variables
 let stage:createjs.StageGL;
@@ -17,8 +18,8 @@ let assetManager:AssetManager;
 
 // game objects
 let background:createjs.Sprite;
-let fakeGround:createjs.Sprite;
 let spaceMan:Player;
+let ground:Platform;
 
 // --------------------------------------------------- event handlers
 function onReady(e:createjs.Event):void {
@@ -29,12 +30,11 @@ function onReady(e:createjs.Event):void {
     background.scaleY = 3;
     stage.addChild(background);
 
-    fakeGround = assetManager.getSprite("assets", "_600x260Grass_", 0, 0);
-    fakeGround.x = 450;
-    stage.addChild(fakeGround);
-
     spaceMan = new Player(stage, assetManager);
     
+    ground = new Platform(stage, assetManager, spaceMan)
+    stage.addChild(spaceMan.sprite);
+
     // startup the ticker
     createjs.Ticker.framerate = FRAME_RATE;
     createjs.Ticker.on("tick", onTick);        
@@ -47,6 +47,7 @@ function onTick(e:createjs.Event):void {
 
     // This is your game loop :)
     spaceMan.Update();
+    ground.PlatformUpdate(spaceMan);
 
     // update the stage!
     stage.update();

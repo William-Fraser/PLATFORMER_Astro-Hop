@@ -5,8 +5,8 @@ import GameCharacter, { DIRECTION } from "./GameCharacter";
 export default class Player extends GameCharacter {
 
     private _timeToJump:boolean;// bool to find out if player is on platform, used to set jumpPower
-    private _jumpPower:number;// fixed power which to propel off the ground with set before jump
-    private _jumpWeight:number;// fixed rate which movement speed decreases during jump
+    private _jumpPower:number;// power which to propel off the ground with set before jump
+    private _jumpWeight:number;// rate which movement speed decreases during jump
     private _fallingGravity:number;// rate which movement speed increases during fall  
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager) {
@@ -43,12 +43,16 @@ export default class Player extends GameCharacter {
 
         this.positionMe(STAGE_WIDTH/2, STAGE_HEIGHT/2+(STAGE_HEIGHT/2)/2); // sets 
     }
-    
-    // ----- gets/sets
-    get Weight():number { return this._jumpWeight; }
-    set Weight(value:number) { this._jumpWeight = value; }
-    get Gravity():number { return this._fallingGravity; }
-    set Gravity(value:number) { this._fallingGravity = value; }
+    //#region // ----- gets/sets 
+    get Jumping():boolean { return this._timeToJump; }//         [ used in various Platforms ]
+    set Jumping(value:boolean) { this._timeToJump = value;}
+    get power():number { return this._jumpPower; }
+    set power(value:number) { this._jumpPower = value; }//          [___________________________]
+    get weight():number { return this._jumpWeight; } //             [ used in moonshoe item ]
+    set weight(value:number) { this._jumpWeight = value; }
+    get gravity():number { return this._fallingGravity; }
+    set gravity(value:number) { this._fallingGravity = value; }//   [_______________________]
+    //#endregion ----- (all private fields are accessed, in different areas)
 
     // ----- private methods
     private JumpOffPlatform() {
@@ -81,17 +85,10 @@ export default class Player extends GameCharacter {
         }
     }
 
-    //placeholder for platform
-    private detectPlatform(){
-        if (this._sprite.y > 450){ // 450 is a magic number that represents the 'ground'
-            this._timeToJump = true;
-            this._direction = DIRECTION.UP;
-            console.log("this reaches the ground "+(STAGE_HEIGHT/2+(STAGE_HEIGHT/2)/2));
-        }
-    }
-
     // ----- public methods
     public Update() {
+
+        this.detectEdges();
 
         // jumping
         if (this._direction == DIRECTION.UP){
@@ -102,9 +99,5 @@ export default class Player extends GameCharacter {
         if (this._direction == DIRECTION.DOWN){
             this.Fall();
         }
-        
-        this.detectEdges();
-
-        this.detectPlatform();
     }
 }

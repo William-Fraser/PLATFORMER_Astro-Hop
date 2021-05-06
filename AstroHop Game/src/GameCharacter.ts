@@ -56,7 +56,7 @@ export default class GameCharacter extends GameObject {
         // NEEDS DEATH ANIMATION AFTER SUPER w\/
         //this._state = GameCharacter.STATE_DYING;
     }
-    public update(){
+    public Update(){
         // reference sprite object for cleaner code below
         let sprite:createjs.Sprite = this._sprite;
         
