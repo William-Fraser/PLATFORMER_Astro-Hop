@@ -18,9 +18,9 @@ export default class Fireball extends Item {
         this._itemType = TYPE.FIREBALL;
         
         //init private fields
-        this._readyToFire = false;
+        this._readyToFire = true;
         // set up with constants when changed into blaster
-        this._bulletSpeed = 7;
+        this._bulletSpeed = 6;
         this._ammo = 3;
 
         //init sprite/animation
@@ -30,9 +30,9 @@ export default class Fireball extends Item {
 
     // ----- public methods 
     public UseItem(player:Player) {
-        if (this._ammo > 0) {
-            this.positionMe(player.sprite.x, player.sprite.y-50);
+        if (this._readyToFire && this._ammo > 0) {
             this._readyToFire = false; // fire gun and set ready to fire to false to prevent resetting bullet
+            this.positionMe(player.sprite.x, player.sprite.y-50);
             this._ammo--;
             console.log(this._ammo);
         }

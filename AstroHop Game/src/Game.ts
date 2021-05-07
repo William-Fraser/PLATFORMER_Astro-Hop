@@ -81,7 +81,7 @@ function onReady(e:createjs.Event):void {
 function onPlatform(e:createjs.Event):void {
     spaceMan.Jumping = true;
     spaceMan.direction = DIRECTION.UP;
-    console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y);
+    //console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y); // debug
 }
 function onPickup(e:createjs.Event) {
     inventory.savedItem = placeholderItem.itemType; // placeholder will change to an item manager for picked up items

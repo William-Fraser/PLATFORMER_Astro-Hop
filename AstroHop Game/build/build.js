@@ -10175,6 +10175,7 @@ exports.default = GameCharacter;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ../Managers/Constants */ "./src/Managers/Constants.ts");
+const Toolkit_1 = __webpack_require__(/*! ../Managers/Toolkit */ "./src/Managers/Toolkit.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/Characters/GameCharacter.ts");
 class Player extends GameCharacter_1.default {
     constructor(stage, assetManager) {
@@ -10230,6 +10231,14 @@ class Player extends GameCharacter_1.default {
         }
         else if (this._sprite.x >= (Constants_1.STAGE_WIDTH - this._sprite.getBounds().width)) {
             this._sprite.x = (Constants_1.STAGE_WIDTH - this._sprite.getBounds().width);
+        }
+    }
+    PlatformHit(platform) {
+        if (Toolkit_1.pointHit(this._sprite, platform.sprite, -6, 14) ||
+            Toolkit_1.pointHit(this._sprite, platform.sprite, 6, 14) ||
+            Toolkit_1.pointHit(this._sprite, platform.sprite, 0, 9) ||
+            Toolkit_1.pointHit(this._sprite, platform.sprite, 0, 14)) {
+            this.stage.dispatchEvent(platform.eventPlayerOnPlatform);
         }
     }
     Update() {
@@ -10309,7 +10318,6 @@ function onReady(e) {
 function onPlatform(e) {
     spaceMan.Jumping = true;
     spaceMan.direction = GameCharacter_1.DIRECTION.UP;
-    console.log(spaceMan.sprite.currentAnimation.toString + " hit a platform at;  X: " + spaceMan.sprite.x + ", Y: " + spaceMan.sprite.y);
 }
 function onPickup(e) {
     inventory.savedItem = placeholderItem.itemType;
@@ -10665,16 +10673,16 @@ class Fireball extends Item_1.default {
         super(stage, assetManager);
         this._itemForm = Item_1.FORM.SPRITE;
         this._itemType = Item_1.TYPE.FIREBALL;
-        this._readyToFire = false;
-        this._bulletSpeed = 7;
+        this._readyToFire = true;
+        this._bulletSpeed = 6;
         this._ammo = 3;
         this._sprite = assetManager.getSprite("assets", "fireball/attack", 0, 0);
         stage.addChild(this._sprite);
     }
     UseItem(player) {
-        if (this._ammo > 0) {
-            this.positionMe(player.sprite.x, player.sprite.y - 50);
+        if (this._readyToFire && this._ammo > 0) {
             this._readyToFire = false;
+            this.positionMe(player.sprite.x, player.sprite.y - 50);
             this._ammo--;
             console.log(this._ammo);
         }
@@ -10717,7 +10725,6 @@ exports.default = Fireball;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const GameObject_1 = __webpack_require__(/*! ./GameObject */ "./src/Objects/GameObject.ts");
-const Toolkit_1 = __webpack_require__(/*! ../Managers/Toolkit */ "./src/Managers/Toolkit.ts");
 class Platform extends GameObject_1.default {
     constructor(stage, assetManager, spriteOrAnimation, PosX, PosY) {
         super(stage, assetManager);
@@ -10727,12 +10734,7 @@ class Platform extends GameObject_1.default {
         stage.addChild(this._sprite);
     }
     DetectPlayerLanding(player) {
-        if (Toolkit_1.pointHit(player.sprite, this._sprite, -6, 14) ||
-            Toolkit_1.pointHit(player.sprite, this._sprite, 6, 14) ||
-            Toolkit_1.pointHit(player.sprite, this._sprite, 0, 11) ||
-            Toolkit_1.pointHit(player.sprite, this._sprite, 0, 14)) {
-            this.stage.dispatchEvent(this.eventPlayerOnPlatform);
-        }
+        player.PlatformHit(this);
     }
     PlatformUpdate(player) {
         super.Update();

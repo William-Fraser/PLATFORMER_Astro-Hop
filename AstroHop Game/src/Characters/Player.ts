@@ -1,5 +1,7 @@
 import AssetManager from "../Managers/AssetManager";
 import { PLAYER_GRAVITYDEFAULT as PLAYER_GRAVITY, PLAYER_POWER, PLAYER_WEIGHTDEFAULT as PLAYER_WEIGHT, STAGE_HEIGHT, STAGE_WIDTH } from "../Managers/Constants";
+import { pointHit } from "../Managers/Toolkit";
+import Platform from "../Objects/Platform";
 import GameCharacter, { DIRECTION } from "./GameCharacter";
  
 export default class Player extends GameCharacter {
@@ -101,6 +103,15 @@ export default class Player extends GameCharacter {
     }
 
     // ----- public methods
+    public PlatformHit(platform:Platform) {
+        if (pointHit(this._sprite, platform.sprite, -6, 14)||
+            pointHit(this._sprite, platform.sprite, 6, 14 )||
+            pointHit(this._sprite, platform.sprite, 0, 9  )||
+            pointHit(this._sprite, platform.sprite, 0, 14 )){
+                this.stage.dispatchEvent(platform.eventPlayerOnPlatform);
+        }
+    }
+
     public Update() {
 
         if (this._spacebarIsPressed) {

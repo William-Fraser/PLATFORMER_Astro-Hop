@@ -6,7 +6,7 @@ import { pointHit } from "../Managers/Toolkit";
 export default class Platform extends GameObject {
 
     // ----- event
-    private eventPlayerOnPlatform:createjs.Event;
+    public eventPlayerOnPlatform:createjs.Event; // platform event called in player class on hit
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager, spriteOrAnimation:string, PosX:number, PosY:number) {
         super(stage, assetManager);
@@ -21,14 +21,8 @@ export default class Platform extends GameObject {
     }    
 
     // ----- private methods
-    private DetectPlayerLanding(player:Player):void {
-
-        if (pointHit(player.sprite, this._sprite, -6, 14 )||
-            pointHit(player.sprite, this._sprite, 6, 14 ) ||
-            pointHit(player.sprite, this._sprite, 0, 11 ) ||
-            pointHit(player.sprite, this._sprite, 0, 14 )) {
-                this.stage.dispatchEvent(this.eventPlayerOnPlatform);
-        }
+    private DetectPlayerLanding(player:Player):void {   
+        player.PlatformHit(this);
     }
 
     // ----- public methods
