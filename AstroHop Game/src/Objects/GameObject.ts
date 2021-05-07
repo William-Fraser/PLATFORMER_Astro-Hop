@@ -56,6 +56,10 @@ export default class GameObject {
         this._sprite.x = x;
         this._sprite.y = y;
     }
+    public scaleMe(scale:number):void {
+        this._sprite.scaleX = scale;
+        this._sprite.scaleY = scale;
+    }
     public Update() {
         switch(this._state) {
             case STATE.IDLE:

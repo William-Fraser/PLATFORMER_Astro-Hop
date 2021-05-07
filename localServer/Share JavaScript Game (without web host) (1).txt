@@ -1,0 +1,11 @@
+Submit/Share JavaScript Game WITHOUT WEB HOST:
+----------------------------------------------
+
+Here are the instructions for the students to submit their games to brightspace:
+- Unzip the attached zip archive (localServer.zip)
+- Make a release build of your game with "npm run release" using VS Code
+- Copy all contents of the /release folder into the /htdocs
+- To test it is working double click the startServer.exe file (you may get a security warning that you have to allow). You will see a command window appear with an IP address (for example: 192.168.1.11:8000). Enter that IP address into a browser to run your game.
+- Zip up all the contents (startServer.exe and /htdocs) and submit to brightspace for evaluation
+
+Thanks to Sean Morrow for these instructions!
