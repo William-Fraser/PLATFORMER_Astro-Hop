@@ -9,6 +9,9 @@ import { DIRECTION } from "./Characters/GameCharacter"
 import AssetManager from "./Managers/AssetManager";
 import Player from "./Characters/Player";
 import Platform from "./Objects/Platform";
+import Item from "./Objects/Item";
+import Fireball from "./Objects/Items/Fireball";
+import InventorySystem from "./Systems/InventorySystem";
 
 // game variables
 let stage:createjs.StageGL;
@@ -21,7 +24,10 @@ let assetManager:AssetManager;
 let background:createjs.Sprite;
 let spaceMan:Player;
 let ground:Platform;
+let placeholderItem:Fireball;
 let placeholderPlatforms:Platform[];
+
+let inventory:InventorySystem;
 
 // --------------------------------------------------- event handlers
 function onReady(e:createjs.Event):void {
@@ -37,8 +43,13 @@ function onReady(e:createjs.Event):void {
     
     ground = new Platform(stage, assetManager, "_600x260Grass_", 0, 450);
     
+    
     placeholderPlatforms = new Array(3);
-
+    
+    placeholderItem = new Fireball(stage, assetManager);
+    placeholderItem.positionMe(135, 100);
+    placeholderItem.scaleMe(2);
+    
     for (let i:number = 0; i < 3; i++){
         let platformMaker:Platform;
         platformMaker = new Platform(stage, assetManager, "placeholderPlatform", 100, 170);
@@ -46,13 +57,20 @@ function onReady(e:createjs.Event):void {
     }
     placeholderPlatforms[1].positionMe(250, 295);
     placeholderPlatforms[2].positionMe(100, 360);
-
+    
+    
     stage.addChild(spaceMan.sprite);
+    
+    inventory = new InventorySystem(stage, assetManager, placeholderItem);
+    
+    //key event listener
+    document.onkeyup = SpacebarPressed;
     //#endregion
-
+    
     //events
     this.stage.on("onPlatform", onPlatform);
     this.stage.on("onPickup", onPickup);
+    this.stage.on("onUseItem", onUseItem);
 
     // startup the ticker
     createjs.Ticker.framerate = FRAME_RATE;
@@ -63,10 +81,23 @@ function onReady(e:createjs.Event):void {
 function onPlatform(e:createjs.Event):void {
     spaceMan.Jumping = true;
     spaceMan.direction = DIRECTION.UP;
-    console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y);
+    //console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y); // debug
 }
 function onPickup(e:createjs.Event) {
-    
+    inventory.savedItem = placeholderItem.itemType; // placeholder will change to an item manager for picked up items
+    console.log("Item Picked up");
+}
+function onUseItem(e:createjs.Event) {
+    inventory.CheckToPullSavedItem();
+    inventory.CheckToUseActiveItem(spaceMan);
+}
+
+//keyboardevents
+function SpacebarPressed(e:KeyboardEvent) {
+    if (e.key == " ") {
+        console.log("Spacebar Pressed ");
+        spaceMan.spacebarIsPressed = true;
+    }
 }
 //#endregion
 
@@ -76,7 +107,9 @@ function onTick(e:createjs.Event):void {
 
     // This is your game loop :)
     spaceMan.Update();
+    inventory.Update(spaceMan);
     ground.PlatformUpdate(spaceMan);
+    placeholderItem.ItemUpdate(spaceMan);
 
     for (let i:number = 0; i < 3; i++){
         placeholderPlatforms[i].PlatformUpdate(spaceMan);

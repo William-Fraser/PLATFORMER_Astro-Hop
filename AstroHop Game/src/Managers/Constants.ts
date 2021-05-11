@@ -7,13 +7,13 @@ export const FRAME_RATE:number = 30;
 export const PLAYER_POWER:number = 17; // always constant
 // switchable constants
 export const PLAYER_WEIGHTDEFAULT:number = 1.7; // changes if item is in use
-export const PLAYER_GRAVITYDEFAULT:number = 0.9;// ^
+export const PLAYER_GRAVITYDEFAULT:number = 0.6;// ^
 
 //Enemy constants?
 
 //Item constants
-export const ITEM_MOONSHOE_WEIGHT:number = 0.2;
-export const ITEM_MOONSHOE_GRAVITY:number = 0.5;
+export const ITEM_MOONSHOE_WEIGHT:number = 0.5;
+export const ITEM_MOONSHOE_GRAVITY:number = 0.2;
 
 export const ASSET_MANIFEST:Object[] = [
     {

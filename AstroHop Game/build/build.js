@@ -10175,6 +10175,7 @@ exports.default = GameCharacter;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ../Managers/Constants */ "./src/Managers/Constants.ts");
+const Toolkit_1 = __webpack_require__(/*! ../Managers/Toolkit */ "./src/Managers/Toolkit.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/Characters/GameCharacter.ts");
 class Player extends GameCharacter_1.default {
     constructor(stage, assetManager) {
@@ -10183,17 +10184,16 @@ class Player extends GameCharacter_1.default {
         this._jumpPower = Constants_1.PLAYER_POWER;
         this._jumpWeight = Constants_1.PLAYER_WEIGHTDEFAULT;
         this._fallingGravity = Constants_1.PLAYER_GRAVITYDEFAULT;
+        this._spacebarIsPressed = false;
         this._direction = GameCharacter_1.DIRECTION.DOWN;
         this.stage.mouseMoveOutside = true;
         this._movementSpeed = 1;
         this._sprite = assetManager.getSprite("assets", "Astronaught/AstronaughtColor", 0, 0);
-        this._sprite.scaleX = 2;
-        this._sprite.scaleY = 2;
         this._sprite.play();
+        this.scaleMe(2);
         stage.addChild(this._sprite);
-        this.stage.on("pressmove", () => {
-            this._sprite.x = this.stage.mouseX;
-        });
+        this.eventSpacebarUseItem = new createjs.Event("onUseItem", true, false);
+        this.MouseMovementController();
         this.positionMe(Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2);
     }
     get Jumping() { return this._timeToJump; }
@@ -10204,6 +10204,12 @@ class Player extends GameCharacter_1.default {
     set weight(value) { this._jumpWeight = value; }
     get gravity() { return this._fallingGravity; }
     set gravity(value) { this._fallingGravity = value; }
+    set spacebarIsPressed(value) { this._spacebarIsPressed = value; }
+    MouseMovementController() {
+        this.stage.on("pressmove", () => {
+            this._sprite.x = this.stage.mouseX;
+        });
+    }
     JumpOffPlatform() {
         if (this._timeToJump) {
             this._movementSpeed = this._jumpPower;
@@ -10227,7 +10233,19 @@ class Player extends GameCharacter_1.default {
             this._sprite.x = (Constants_1.STAGE_WIDTH - this._sprite.getBounds().width);
         }
     }
+    PlatformHit(platform) {
+        if (Toolkit_1.pointHit(this._sprite, platform.sprite, -6, 14) ||
+            Toolkit_1.pointHit(this._sprite, platform.sprite, 6, 14) ||
+            Toolkit_1.pointHit(this._sprite, platform.sprite, 0, 9) ||
+            Toolkit_1.pointHit(this._sprite, platform.sprite, 0, 14)) {
+            this.stage.dispatchEvent(platform.eventPlayerOnPlatform);
+        }
+    }
     Update() {
+        if (this._spacebarIsPressed) {
+            this.stage.dispatchEvent(this.eventSpacebarUseItem);
+            this._spacebarIsPressed = false;
+        }
         this.detectEdges();
         if (this._direction == GameCharacter_1.DIRECTION.UP) {
             this.JumpOffPlatform();
@@ -10258,13 +10276,17 @@ const GameCharacter_1 = __webpack_require__(/*! ./Characters/GameCharacter */ ".
 const AssetManager_1 = __webpack_require__(/*! ./Managers/AssetManager */ "./src/Managers/AssetManager.ts");
 const Player_1 = __webpack_require__(/*! ./Characters/Player */ "./src/Characters/Player.ts");
 const Platform_1 = __webpack_require__(/*! ./Objects/Platform */ "./src/Objects/Platform.ts");
+const Fireball_1 = __webpack_require__(/*! ./Objects/Items/Fireball */ "./src/Objects/Items/Fireball.ts");
+const InventorySystem_1 = __webpack_require__(/*! ./Systems/InventorySystem */ "./src/Systems/InventorySystem.ts");
 let stage;
 let canvas;
 let assetManager;
 let background;
 let spaceMan;
 let ground;
+let placeholderItem;
 let placeholderPlatforms;
+let inventory;
 function onReady(e) {
     console.log(">> adding sprites to game");
     background = assetManager.getSprite("assets", "_600x260Grass__600x2602DGrass&amp;NightSky", 0, 0);
@@ -10273,6 +10295,9 @@ function onReady(e) {
     spaceMan = new Player_1.default(stage, assetManager);
     ground = new Platform_1.default(stage, assetManager, "_600x260Grass_", 0, 450);
     placeholderPlatforms = new Array(3);
+    placeholderItem = new Fireball_1.default(stage, assetManager);
+    placeholderItem.positionMe(135, 100);
+    placeholderItem.scaleMe(2);
     for (let i = 0; i < 3; i++) {
         let platformMaker;
         platformMaker = new Platform_1.default(stage, assetManager, "placeholderPlatform", 100, 170);
@@ -10281,8 +10306,11 @@ function onReady(e) {
     placeholderPlatforms[1].positionMe(250, 295);
     placeholderPlatforms[2].positionMe(100, 360);
     stage.addChild(spaceMan.sprite);
+    inventory = new InventorySystem_1.default(stage, assetManager, placeholderItem);
+    document.onkeyup = SpacebarPressed;
     this.stage.on("onPlatform", onPlatform);
     this.stage.on("onPickup", onPickup);
+    this.stage.on("onUseItem", onUseItem);
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
     console.log(">> game ready");
@@ -10290,14 +10318,27 @@ function onReady(e) {
 function onPlatform(e) {
     spaceMan.Jumping = true;
     spaceMan.direction = GameCharacter_1.DIRECTION.UP;
-    console.log(spaceMan.sprite.currentAnimation.toString + " hit a platform at;  X: " + spaceMan.sprite.x + ", Y: " + spaceMan.sprite.y);
 }
 function onPickup(e) {
+    inventory.savedItem = placeholderItem.itemType;
+    console.log("Item Picked up");
+}
+function onUseItem(e) {
+    inventory.CheckToPullSavedItem();
+    inventory.CheckToUseActiveItem(spaceMan);
+}
+function SpacebarPressed(e) {
+    if (e.key == " ") {
+        console.log("Spacebar Pressed ");
+        spaceMan.spacebarIsPressed = true;
+    }
 }
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
     spaceMan.Update();
+    inventory.Update(spaceMan);
     ground.PlatformUpdate(spaceMan);
+    placeholderItem.ItemUpdate(spaceMan);
     for (let i = 0; i < 3; i++) {
         placeholderPlatforms[i].PlatformUpdate(spaceMan);
     }
@@ -10411,9 +10452,9 @@ exports.STAGE_HEIGHT = 600;
 exports.FRAME_RATE = 30;
 exports.PLAYER_POWER = 17;
 exports.PLAYER_WEIGHTDEFAULT = 1.7;
-exports.PLAYER_GRAVITYDEFAULT = 0.9;
-exports.ITEM_MOONSHOE_WEIGHT = 0.2;
-exports.ITEM_MOONSHOE_GRAVITY = 0.5;
+exports.PLAYER_GRAVITYDEFAULT = 0.6;
+exports.ITEM_MOONSHOE_WEIGHT = 0.5;
+exports.ITEM_MOONSHOE_GRAVITY = 0.2;
 exports.ASSET_MANIFEST = [
     {
         type: "json",
@@ -10538,6 +10579,10 @@ class GameObject {
         this._sprite.x = x;
         this._sprite.y = y;
     }
+    scaleMe(scale) {
+        this._sprite.scaleX = scale;
+        this._sprite.scaleY = scale;
+    }
     Update() {
         switch (this._state) {
             case STATE.IDLE:
@@ -10554,6 +10599,121 @@ exports.default = GameObject;
 
 /***/ }),
 
+/***/ "./src/Objects/Item.ts":
+/*!*****************************!*\
+  !*** ./src/Objects/Item.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FORM = exports.TYPE = void 0;
+const Toolkit_1 = __webpack_require__(/*! ../Managers/Toolkit */ "./src/Managers/Toolkit.ts");
+const GameObject_1 = __webpack_require__(/*! ./GameObject */ "./src/Objects/GameObject.ts");
+var TYPE;
+(function (TYPE) {
+    TYPE[TYPE["NULL"] = 0] = "NULL";
+    TYPE[TYPE["FIREBALL"] = 1] = "FIREBALL";
+    TYPE[TYPE["TOTALNUMBER"] = 2] = "TOTALNUMBER";
+})(TYPE = exports.TYPE || (exports.TYPE = {}));
+var FORM;
+(function (FORM) {
+    FORM[FORM["SPRITE"] = 0] = "SPRITE";
+    FORM[FORM["INUSE"] = 1] = "INUSE";
+})(FORM = exports.FORM || (exports.FORM = {}));
+class Item extends GameObject_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager);
+        this.eventPlayerPickUpItem = new createjs.Event("onPickup", true, false);
+    }
+    get itemForm() { return this._itemForm; }
+    set itemForm(value) { this._itemForm = value; }
+    get itemType() { return this._itemType; }
+    set itemType(value) { this._itemType = value; }
+    DetectPickup(player) {
+        if (Toolkit_1.boxHit(player.sprite, this._sprite)) {
+            this._sprite.dispatchEvent(this.eventPlayerPickUpItem);
+            this.RemoveItemObject();
+        }
+    }
+    RemoveItemObject() {
+        this.stage.removeChild(this._sprite);
+        this.positionMe(0, 0);
+    }
+    UseItem(player) {
+    }
+    ItemUpdate(player) {
+        super.Update();
+        if (this._itemForm != FORM.INUSE) {
+            this.DetectPickup(player);
+        }
+    }
+}
+exports.default = Item;
+
+
+/***/ }),
+
+/***/ "./src/Objects/Items/Fireball.ts":
+/*!***************************************!*\
+  !*** ./src/Objects/Items/Fireball.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Item_1 = __webpack_require__(/*! ../Item */ "./src/Objects/Item.ts");
+const GameObject_1 = __webpack_require__(/*! ../GameObject */ "./src/Objects/GameObject.ts");
+class Fireball extends Item_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager);
+        this._itemForm = Item_1.FORM.SPRITE;
+        this._itemType = Item_1.TYPE.FIREBALL;
+        this._readyToFire = true;
+        this._bulletSpeed = 6;
+        this._ammo = 3;
+        this._sprite = assetManager.getSprite("assets", "fireball/attack", 0, 0);
+        stage.addChild(this._sprite);
+    }
+    UseItem(player) {
+        if (this._readyToFire && this._ammo > 0) {
+            this._readyToFire = false;
+            this.positionMe(player.sprite.x, player.sprite.y - 50);
+            this._ammo--;
+            console.log(this._ammo);
+        }
+    }
+    ItemUpdate(player) {
+        super.ItemUpdate(player);
+        if (this._sprite.y < -this._sprite.getBounds().height) {
+            this.idleMe();
+            this._readyToFire = true;
+            console.log("ready to fire");
+            this._sprite.y = 700;
+            if (this._ammo == 0) {
+                this._state = GameObject_1.STATE.GONE;
+            }
+        }
+        if (this._itemForm == Item_1.FORM.SPRITE) {
+            this.idleMe();
+        }
+        else if (this._itemForm == Item_1.FORM.INUSE) {
+            this.startMe();
+            if (!this._readyToFire) {
+                this._sprite.y -= this._bulletSpeed;
+            }
+        }
+    }
+}
+exports.default = Fireball;
+
+
+/***/ }),
+
 /***/ "./src/Objects/Platform.ts":
 /*!*********************************!*\
   !*** ./src/Objects/Platform.ts ***!
@@ -10565,7 +10725,6 @@ exports.default = GameObject;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const GameObject_1 = __webpack_require__(/*! ./GameObject */ "./src/Objects/GameObject.ts");
-const Toolkit_1 = __webpack_require__(/*! ../Managers/Toolkit */ "./src/Managers/Toolkit.ts");
 class Platform extends GameObject_1.default {
     constructor(stage, assetManager, spriteOrAnimation, PosX, PosY) {
         super(stage, assetManager);
@@ -10575,12 +10734,7 @@ class Platform extends GameObject_1.default {
         stage.addChild(this._sprite);
     }
     DetectPlayerLanding(player) {
-        if (Toolkit_1.pointHit(player.sprite, this._sprite, -6, 14) ||
-            Toolkit_1.pointHit(player.sprite, this._sprite, 6, 14) ||
-            Toolkit_1.pointHit(player.sprite, this._sprite, 0, 11) ||
-            Toolkit_1.pointHit(player.sprite, this._sprite, 0, 14)) {
-            this.stage.dispatchEvent(this.eventPlayerOnPlatform);
-        }
+        player.PlatformHit(this);
     }
     PlatformUpdate(player) {
         super.Update();
@@ -10590,6 +10744,81 @@ class Platform extends GameObject_1.default {
     }
 }
 exports.default = Platform;
+
+
+/***/ }),
+
+/***/ "./src/Systems/InventorySystem.ts":
+/*!****************************************!*\
+  !*** ./src/Systems/InventorySystem.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const GameObject_1 = __webpack_require__(/*! ../Objects/GameObject */ "./src/Objects/GameObject.ts");
+const Item_1 = __webpack_require__(/*! ../Objects/Item */ "./src/Objects/Item.ts");
+class InventorySystem {
+    constructor(stage, assetManager, placeHolderParameter) {
+        this._ItemHold = new Array(Item_1.TYPE.TOTALNUMBER);
+        this._activeItemIdentity = Item_1.TYPE.NULL;
+        this._savedItemIdentity = Item_1.TYPE.NULL;
+        this.savedItemDisplayOnce = Item_1.TYPE.NULL;
+        this.stage = stage;
+        this._ItemHold[Item_1.TYPE.FIREBALL] = placeHolderParameter;
+    }
+    set savedItem(value) { this._savedItemIdentity = value; }
+    UseActiveItem(player) {
+        if (this._activeItemIdentity != Item_1.TYPE.NULL) {
+            console.log("used activeItem");
+            this._ItemHold[this._activeItemIdentity].UseItem(player);
+        }
+    }
+    UseSavedItem() {
+        this._activeItemIdentity = this._savedItemIdentity;
+        this._savedItemIdentity = Item_1.TYPE.NULL;
+        console.log("used savedItem");
+    }
+    CheckToRemoveActiveItem() {
+        if (this._ItemHold[this._activeItemIdentity].state == GameObject_1.STATE.GONE) {
+            this.RemoveActiveItem();
+        }
+    }
+    RemoveActiveItem() {
+        this.stage.removeChild(this._ItemHold[this._activeItemIdentity].sprite);
+        this._activeItemIdentity = Item_1.TYPE.NULL;
+        console.log("used up all of activeItem");
+    }
+    CheckToPullSavedItem() {
+        if (this._activeItemIdentity == Item_1.TYPE.NULL && this._savedItemIdentity != Item_1.TYPE.NULL) {
+            this.UseSavedItem();
+        }
+    }
+    CheckToUseActiveItem(player) {
+        if (this._activeItemIdentity != Item_1.TYPE.NULL) {
+            this.UseActiveItem(player);
+        }
+    }
+    Update(player) {
+        if (this._activeItemIdentity != Item_1.TYPE.NULL) {
+            this._ItemHold[this._activeItemIdentity].ItemUpdate(player);
+            this.CheckToRemoveActiveItem();
+        }
+        if (this._activeItemIdentity != Item_1.TYPE.NULL) {
+            this._ItemHold[this._activeItemIdentity].ItemUpdate(player);
+            this._ItemHold[this._activeItemIdentity].itemForm = Item_1.FORM.INUSE;
+        }
+        if (this._savedItemIdentity != this.savedItemDisplayOnce && this._savedItemIdentity != Item_1.TYPE.NULL) {
+            this._ItemHold[this._savedItemIdentity].itemForm = Item_1.FORM.SPRITE;
+            this.stage.addChild(this._ItemHold[this._savedItemIdentity].sprite);
+            this._ItemHold[this._savedItemIdentity].positionMe(20, 20);
+            this.savedItemDisplayOnce = this._savedItemIdentity;
+        }
+    }
+}
+exports.default = InventorySystem;
 
 
 /***/ }),
