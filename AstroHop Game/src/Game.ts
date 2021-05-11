@@ -63,15 +63,15 @@ function onReady(e:createjs.Event):void {
     
     inventory = new InventorySystem(stage, assetManager, placeholderItem);
     
-    //key event listener
-    document.onkeyup = SpacebarPressed;
-    //#endregion
-    
     //events
     this.stage.on("onPlatform", onPlatform);
     this.stage.on("onPickup", onPickup);
     this.stage.on("onUseItem", onUseItem);
-
+    
+    //key event listener
+    document.onkeyup = SpacebarPressed;
+    //#endregion 
+    
     // startup the ticker
     createjs.Ticker.framerate = FRAME_RATE;
     createjs.Ticker.on("tick", onTick);        
@@ -81,6 +81,10 @@ function onReady(e:createjs.Event):void {
 function onPlatform(e:createjs.Event):void {
     spaceMan.Jumping = true;
     spaceMan.direction = DIRECTION.UP;
+    if (!this.landOnce) {
+        //scoremanager increase score
+        this.landOnce = true;
+    }
     //console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y); // debug
 }
 function onPickup(e:createjs.Event) {

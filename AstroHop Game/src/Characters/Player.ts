@@ -103,7 +103,7 @@ export default class Player extends GameCharacter {
     }
 
     // ----- public methods
-    public PlatformHit(platform:Platform) {
+    public PlatformHit(platform:Platform) { // HIT POINTS
         if (pointHit(this._sprite, platform.sprite, -6, 14)||
             pointHit(this._sprite, platform.sprite, 6, 14 )||
             pointHit(this._sprite, platform.sprite, 0, 9  )||

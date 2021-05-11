@@ -5,11 +5,17 @@ import { pointHit } from "../Managers/Toolkit";
 
 export default class Platform extends GameObject {
 
+    // ----- public fields
+    public landOnce:boolean;
+
     // ----- event
     public eventPlayerOnPlatform:createjs.Event; // platform event called in player class on hit
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager, spriteOrAnimation:string, PosX:number, PosY:number) {
         super(stage, assetManager);
+
+        //init public var
+        this.landOnce = false;
 
         //init event
         this.eventPlayerOnPlatform = new createjs.Event("onPlatform", true, false);
