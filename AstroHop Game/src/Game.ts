@@ -4,7 +4,7 @@
 // importing createjs framework
 import "createjs";
 // importing game constants
-import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Managers/Constants";
+import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Constants";
 import { DIRECTION } from "./Characters/GameCharacter"
 import AssetManager from "./Managers/AssetManager";
 import Player from "./Characters/Player";
@@ -12,6 +12,9 @@ import Platform from "./Objects/Platform";
 import Item from "./Objects/Item";
 import Fireball from "./Objects/Items/Fireball";
 import InventorySystem from "./Systems/InventorySystem";
+import ScoreSystem from "./Systems/ScoreSystem";
+import Breakable from "./Objects/Platforms/Breakable";
+import Breaking from "./Objects/Platforms/Breaking";
 
 // game variables
 let stage:createjs.StageGL;
@@ -27,6 +30,7 @@ let ground:Platform;
 let placeholderItem:Fireball;
 let placeholderPlatforms:Platform[];
 
+let score:ScoreSystem;
 let inventory:InventorySystem;
 
 // --------------------------------------------------- event handlers
@@ -52,7 +56,11 @@ function onReady(e:createjs.Event):void {
     
     for (let i:number = 0; i < 3; i++){
         let platformMaker:Platform;
-        platformMaker = new Platform(stage, assetManager, "placeholderPlatform", 100, 170);
+        if (i == 0) {
+            platformMaker = new Breaking(stage, assetManager, "placeholderPlatform", 100, 170);
+        } else {
+            platformMaker = new Platform(stage, assetManager, "placeholderPlatform", 100, 170);
+        }
         placeholderPlatforms[i] = platformMaker;
     }
     placeholderPlatforms[1].positionMe(250, 295);
@@ -62,6 +70,8 @@ function onReady(e:createjs.Event):void {
     stage.addChild(spaceMan.sprite);
     
     inventory = new InventorySystem(stage, assetManager, placeholderItem);
+
+    score = new ScoreSystem(stage, assetManager);
     
     //events
     this.stage.on("onPlatform", onPlatform);
@@ -81,11 +91,12 @@ function onReady(e:createjs.Event):void {
 function onPlatform(e:createjs.Event):void {
     spaceMan.Jumping = true;
     spaceMan.direction = DIRECTION.UP;
-    if (!this.landOnce) {
-        //scoremanager increase score
-        this.landOnce = true;
+    if (spaceMan.gainedPoints > 0) {
+        //console.debug("add platform points");
+        score.Add(spaceMan.gainedPoints);
+        spaceMan.gainedPoints = 0;
     }
-    //console.log(spaceMan.sprite.currentAnimation.toString+" hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y); // debug
+    //console.debug("player hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y); // debug
 }
 function onPickup(e:createjs.Event) {
     inventory.savedItem = placeholderItem.itemType; // placeholder will change to an item manager for picked up items
@@ -112,6 +123,7 @@ function onTick(e:createjs.Event):void {
     // This is your game loop :)
     spaceMan.Update();
     inventory.Update(spaceMan);
+    score.Update();
     ground.PlatformUpdate(spaceMan);
     placeholderItem.ItemUpdate(spaceMan);
 

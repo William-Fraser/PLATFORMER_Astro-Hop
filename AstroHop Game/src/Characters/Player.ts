@@ -1,6 +1,6 @@
 import AssetManager from "../Managers/AssetManager";
-import { PLAYER_GRAVITYDEFAULT as PLAYER_GRAVITY, PLAYER_POWER, PLAYER_WEIGHTDEFAULT as PLAYER_WEIGHT, STAGE_HEIGHT, STAGE_WIDTH } from "../Managers/Constants";
-import { pointHit } from "../Managers/Toolkit";
+import { PLAYER_GRAVITYDEFAULT as PLAYER_GRAVITY, PLAYER_POWER, PLAYER_WEIGHTDEFAULT as PLAYER_WEIGHT, STAGE_HEIGHT, STAGE_WIDTH } from "../Constants";
+import { pointHit } from "../Toolkit";
 import Platform from "../Objects/Platform";
 import GameCharacter, { DIRECTION } from "./GameCharacter";
  
@@ -10,6 +10,7 @@ export default class Player extends GameCharacter {
     private _jumpPower:number;// power which to propel off the ground with set before jump
     private _jumpWeight:number;// rate which movement speed decreases during jump
     private _fallingGravity:number;// rate which movement speed increases during fall  
+    public gainedPoints:number; // number that updates to a value of points gained the score system will add them and reset this value to 0
 
     //spacebar bool
     private _spacebarIsPressed:boolean;
@@ -27,6 +28,9 @@ export default class Player extends GameCharacter {
         this._jumpWeight = PLAYER_WEIGHT;
         this._fallingGravity = PLAYER_GRAVITY;
         this._spacebarIsPressed = false;
+
+        // inst public fields
+        this.gainedPoints = 0;
         
         // instance protected fields
         this._direction = DIRECTION.DOWN;
@@ -34,7 +38,7 @@ export default class Player extends GameCharacter {
         this._movementSpeed = 1; // starts at one and almost always changes
         
         // instance Sprite, init animation [NEEDS ANIMATION \/\/\/\/\/]
-        this._sprite = assetManager.getSprite("assets", "Astronaught/AstronaughtColor", 0, 0);
+        this._sprite = assetManager.getSprite("assets", "Astronaught/Color", 0, 0);
         this._sprite.play();
         this.scaleMe(2);
         stage.addChild(this._sprite);
@@ -103,12 +107,26 @@ export default class Player extends GameCharacter {
     }
 
     // ----- public methods
-    public PlatformHit(platform:Platform) { // HIT POINTS
-        if (pointHit(this._sprite, platform.sprite, -6, 14)||
-            pointHit(this._sprite, platform.sprite, 6, 14 )||
-            pointHit(this._sprite, platform.sprite, 0, 9  )||
-            pointHit(this._sprite, platform.sprite, 0, 14 )){
-                this.stage.dispatchEvent(platform.eventPlayerOnPlatform);
+    public PlatformHit(platform:Platform) {
+        if ( //  to edit; remove player.update from game loop & add ", this.stage" to the end of every parameter of point hit
+        pointHit(this._sprite, platform.sprite, -6, 14)||
+        pointHit(this._sprite, platform.sprite, 6, 14 )||
+        pointHit(this._sprite, platform.sprite, 0, 9  )||
+        pointHit(this._sprite, platform.sprite, 0, 14 )){
+            
+            let eventPlatform = platform; // checking to be passed
+            
+            // if this is the first time hitting the platform add points // could be its own method?
+            if (!platform.landOnce) {
+                //console.debug("landOnce");
+                //score.Add(1);
+                this.gainedPoints = platform.scoreValue;
+                platform.landOnce = true;
+             
+            }
+            platform.UseAbility();
+
+            platform.sprite.dispatchEvent(platform.eventPlayerOnPlatform);
         }
     }
 

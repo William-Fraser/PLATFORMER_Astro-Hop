@@ -54,7 +54,7 @@ export default class GameCharacter extends GameObject {
             this._state = STATE.GONE;
         });
         // NEEDS DEATH ANIMATION AFTER SUPER w\/
-        //this._state = GameCharacter.STATE_DYING;
+        this._state = STATE.DYING;
     }
     public Update(){
         // reference sprite object for cleaner code below

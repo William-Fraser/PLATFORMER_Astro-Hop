@@ -36,8 +36,8 @@ export default class InventorySystem {
     
     // ----- private methods
     private UseActiveItem(player:Player) {
-        if (this._activeItemIdentity != TYPE.NULL){
-            console.log("used activeItem") ;
+        if (this._activeItemIdentity != TYPE.NULL){ //cant use item if there's no item //blocker
+            console.log("using activeItem") ;
             this._ItemHold[this._activeItemIdentity].UseItem(player);
         }
     }
@@ -72,14 +72,14 @@ export default class InventorySystem {
 
     public Update(player:Player) {
 
-        if (this._activeItemIdentity != TYPE.NULL) {
+        if (this._activeItemIdentity != TYPE.NULL) { //blocker
             //update item for movement animations
             this._ItemHold[this._activeItemIdentity].ItemUpdate(player); 
             //remove if item is state.gone
             this.CheckToRemoveActiveItem();       
         }
-        //display active Item on PlayerSprite, if Item is not NULL
-        if (this._activeItemIdentity != TYPE.NULL) {
+        //display active Item on PlayerSprite,
+        if (this._activeItemIdentity != TYPE.NULL) { //blocker
             
             //update item for movement animations
             this._ItemHold[this._activeItemIdentity].ItemUpdate(player);
@@ -88,12 +88,12 @@ export default class InventorySystem {
         }
 
         //display saved Item in 'inventoryBox', if Item is not NULL
-        if (this._savedItemIdentity != this.savedItemDisplayOnce && this._savedItemIdentity != TYPE.NULL) {
+        if (this._savedItemIdentity != this.savedItemDisplayOnce && this._savedItemIdentity != TYPE.NULL) { //blocker
             // change form to sprite and add it to the stage
             this._ItemHold[this._savedItemIdentity].itemForm = FORM.SPRITE;
             this.stage.addChild(this._ItemHold[this._savedItemIdentity].sprite);
             // position sprite into inventory
-            this._ItemHold[this._savedItemIdentity].positionMe(20, 20);
+            this._ItemHold[this._savedItemIdentity].positionMe(35, 40);
             this.savedItemDisplayOnce = this._savedItemIdentity;
         }
     }

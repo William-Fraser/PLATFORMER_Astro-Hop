@@ -248,20 +248,19 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Astronaught/Back.png</key>
-            <key type="filename">Astronaught/BackJetpack.png</key>
-            <key type="filename">Astronaught/Color.png</key>
-            <key type="filename">Astronaught/ColorWithOutline.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_1.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_2.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_3.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_4.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_5.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_6.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_7.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_8.png</key>
-            <key type="filename">Astronaught/nocolor.png</key>
-            <key type="filename">Astronaught/sideJetpack.png</key>
+            <key type="filename">Astronaught/Back-Jetpack.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_1.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_2.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_3.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_4.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_5.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_6.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_7.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_8.png</key>
+            <key type="filename">Astronaught/idle-Back.png</key>
+            <key type="filename">Astronaught/idle-Color.png</key>
+            <key type="filename">Astronaught/idle-nocolor.png</key>
+            <key type="filename">Astronaught/side-Jetpack.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
