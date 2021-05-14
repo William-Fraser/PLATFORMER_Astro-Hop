@@ -1,6 +1,6 @@
 import Player from "../Characters/Player";
 import AssetManager from "../Managers/AssetManager";
-import { boxHit } from "../Managers/Toolkit";
+import { boxHit } from "../Toolkit";
 import GameObject from "./GameObject";
 
 export enum TYPE {
@@ -55,6 +55,7 @@ export default class Item extends GameObject {
 
     // ----- public methods
     public UseItem(player:Player) {
+        console.log("effect item/no active use") ;
         //Overloaded method
     }
 

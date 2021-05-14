@@ -29,8 +29,9 @@ export default class Fireball extends Item {
     }
 
     // ----- public methods 
-    public UseItem(player:Player) {
+    public UseItem(player:Player) { // overloaded method
         if (this._readyToFire && this._ammo > 0) {
+            console.log("fireball shot") ;
             this._readyToFire = false; // fire gun and set ready to fire to false to prevent resetting bullet
             this.positionMe(player.sprite.x, player.sprite.y-50);
             this._ammo--;
