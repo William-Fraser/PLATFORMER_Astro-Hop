@@ -1,16 +1,16 @@
 import AssetManager from "../../Managers/AssetManager";
-import Platform from "../Platform";
-import Player from "../../Characters/Player";
-import { STATE } from "../GameObject";
 import Breakable from "./Breakable";
+import { PLATFORM_BREAKABLE_SCOREVALUE as SCOREVALUE, PLATFORM_BREAKING_USES as USES } from "../../Constants";
 
 export default class Breaking extends Breakable {
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, spriteOrAnimation:string, PosX:number, PosY:number) {
-        super(stage, assetManager, spriteOrAnimation, PosX, PosY);
+    // basically a stronger breakable
+
+    constructor(stage:createjs.StageGL, assetManager:AssetManager) {
+        super(stage, assetManager);
         
         //inst protected fields
-        this._uses = 7;
-        this._scoreValue = 1;
+        this._uses = USES;
+        this._scoreValue = SCOREVALUE;
     }
 }

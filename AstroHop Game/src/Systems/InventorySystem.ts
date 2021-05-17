@@ -93,7 +93,7 @@ export default class InventorySystem {
             this._ItemHold[this._savedItemIdentity].itemForm = FORM.SPRITE;
             this.stage.addChild(this._ItemHold[this._savedItemIdentity].sprite);
             // position sprite into inventory
-            this._ItemHold[this._savedItemIdentity].positionMe(35, 40);
+            this._ItemHold[this._savedItemIdentity].positionMe(35, 35);
             this.savedItemDisplayOnce = this._savedItemIdentity;
         }
     }

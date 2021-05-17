@@ -1,7 +1,6 @@
 import AssetManager from "../Managers/AssetManager";
 import GameObject, { STATE } from "./GameObject";
 import Player from "../Characters/Player";
-import { pointHit } from "../Toolkit";
 
 export default class Platform extends GameObject {
 
@@ -14,7 +13,7 @@ export default class Platform extends GameObject {
     // events
     public eventPlayerOnPlatform:createjs.Event; // platform event called in player class on hit
     
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, spriteOrAnimation:string, PosX:number, PosY:number) {
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, spriteOrAnimation:string) {
         super(stage, assetManager);
 
         //inst private var
@@ -27,7 +26,7 @@ export default class Platform extends GameObject {
         this.eventPlayerOnPlatform = new createjs.Event("onPlatform", true, false);
         
         //create sprite // move to individual classes
-        this._sprite = assetManager.getSprite("assets", spriteOrAnimation, PosX, PosY);
+        this._sprite = assetManager.getSprite("assets", spriteOrAnimation, 0, 0);
         this._sprite.play();
         stage.addChild(this._sprite);
     }   
@@ -49,7 +48,7 @@ export default class Platform extends GameObject {
     }
 
     // ----- public methods
-    public UseAbility() {
+    public UseAbility(player:Player) {
         //overloaded method
     }
 
