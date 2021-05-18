@@ -236,7 +236,7 @@
             <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/placeholderPlatform.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0,0</point_f>
+                <point_f>0.5,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>

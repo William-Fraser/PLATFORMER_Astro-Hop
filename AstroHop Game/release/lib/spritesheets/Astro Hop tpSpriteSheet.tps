@@ -236,7 +236,7 @@
             <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Backgrounds/placeholderPlatform.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0,0</point_f>
+                <point_f>0.5,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -248,27 +248,19 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Astronaught/Astronaught side.png</key>
-            <key type="filename">Astronaught/Astronaught sidenoJetypack.gif</key>
-            <key type="filename">Astronaught/Astronaught sidenoJetypack.png</key>
-            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning.gif</key>
-            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning1.png</key>
-            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning2.png</key>
-            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning3.png</key>
-            <key type="filename">Astronaught/Astronaught sidenoJetypackRunning4.png</key>
-            <key type="filename">Astronaught/Astronaught.png</key>
-            <key type="filename">Astronaught/AstronaughtBack.png</key>
-            <key type="filename">Astronaught/AstronaughtBacknojetpack.png</key>
-            <key type="filename">Astronaught/AstronaughtColor.png</key>
-            <key type="filename">Astronaught/AstronaughtColorWithOutline.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_1.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_2.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_3.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_4.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_5.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_6.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_7.png</key>
-            <key type="filename">Astronaught/Run/sideRunningRight_8.png</key>
+            <key type="filename">Astronaught/Back-Jetpack.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_1.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_2.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_3.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_4.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_5.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_6.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_7.png</key>
+            <key type="filename">Astronaught/Run/sideRunning_8.png</key>
+            <key type="filename">Astronaught/idle-Back.png</key>
+            <key type="filename">Astronaught/idle-Color.png</key>
+            <key type="filename">Astronaught/idle-nocolor.png</key>
+            <key type="filename">Astronaught/side-Jetpack.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

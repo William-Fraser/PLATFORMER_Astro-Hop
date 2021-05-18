@@ -9,12 +9,19 @@ import { DIRECTION } from "./Characters/GameCharacter"
 import AssetManager from "./Managers/AssetManager";
 import Player from "./Characters/Player";
 import Platform from "./Objects/Platform";
-import Item from "./Objects/Item";
 import Fireball from "./Objects/Items/Fireball";
 import InventorySystem from "./Systems/InventorySystem";
 import ScoreSystem from "./Systems/ScoreSystem";
-import Breakable from "./Objects/Platforms/Breakable";
-import Breaking from "./Objects/Platforms/Breaking";
+import Deadly from "./Objects/Platforms/Deadly";
+import PlatformManager from "./Managers/PlatformManager";
+import ScreenManager from "./Managers/ScreenManager";
+
+enum GAMESTATE {
+    MAINMENU,
+    NEWGAME, // game setup
+    GAMEPLAY,
+    GAMEOVER
+}
 
 // game variables
 let stage:createjs.StageGL;
@@ -26,10 +33,9 @@ let assetManager:AssetManager;
 // game objects
 let background:createjs.Sprite;
 let spaceMan:Player;
-let ground:Platform;
 let placeholderItem:Fireball;
-let placeholderPlatforms:Platform[];
-
+let screenMovement:ScreenManager;
+let platformManager:PlatformManager;
 let score:ScoreSystem;
 let inventory:InventorySystem;
 
@@ -38,34 +44,20 @@ function onReady(e:createjs.Event):void {
     console.log(">> adding sprites to game");
     
     // construct game object sprites
-    background = assetManager.getSprite("assets", "_600x260Grass__600x2602DGrass&amp;NightSky", 0, 0);
-    background.scaleY = 3;
+    background = assetManager.getSprite("assets", "Space Background", 0, 0);
     stage.addChild(background);
 
     //#region // init Stage Objects
     spaceMan = new Player(stage, assetManager);
+
+    screenMovement = new ScreenManager();
     
-    ground = new Platform(stage, assetManager, "_600x260Grass_", 0, 450);
-    
-    
-    placeholderPlatforms = new Array(3);
-    
-    placeholderItem = new Fireball(stage, assetManager);
-    placeholderItem.positionMe(135, 100);
-    placeholderItem.scaleMe(2);
-    
-    for (let i:number = 0; i < 3; i++){
-        let platformMaker:Platform;
-        if (i == 0) {
-            platformMaker = new Breaking(stage, assetManager, "placeholderPlatform", 100, 170);
-        } else {
-            platformMaker = new Platform(stage, assetManager, "placeholderPlatform", 100, 170);
-        }
-        placeholderPlatforms[i] = platformMaker;
-    }
-    placeholderPlatforms[1].positionMe(250, 295);
-    placeholderPlatforms[2].positionMe(100, 360);
-    
+    platformManager = new PlatformManager(stage, assetManager);
+    platformManager.SetupStart();
+
+    // placeholderItem = new Fireball(stage, assetManager);
+    // placeholderItem.positionMe(135, 100);
+    // placeholderItem.scaleMe(2);
     
     stage.addChild(spaceMan.sprite);
     
@@ -121,15 +113,13 @@ function onTick(e:createjs.Event):void {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
 
     // This is your game loop :)
+    screenMovement.Update(spaceMan, platformManager);
     spaceMan.Update();
     inventory.Update(spaceMan);
     score.Update();
-    ground.PlatformUpdate(spaceMan);
-    placeholderItem.ItemUpdate(spaceMan);
+    //placeholderItem.ItemUpdate(spaceMan);
 
-    for (let i:number = 0; i < 3; i++){
-        placeholderPlatforms[i].PlatformUpdate(spaceMan);
-    }
+    platformManager.Update(spaceMan);
 
     // update the stage!
     stage.update();
