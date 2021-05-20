@@ -22,7 +22,7 @@ export default class Moving extends Platform {
     private rightEnd:number;
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager) {
-        super(stage, assetManager, "placeholderPlatform");
+        super(stage, assetManager, "Platforms/rocketpad2");
 
         //inst protected fields
         this._scoreValue = SCOREVALUE;
