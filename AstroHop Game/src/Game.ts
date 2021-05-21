@@ -8,24 +8,25 @@ import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST } from "./Constan
 import { DIRECTION } from "./Characters/GameCharacter"
 import AssetManager from "./Managers/AssetManager";
 import Player from "./Characters/Player";
-import Platform from "./Objects/Platform";
-import Fireball from "./Objects/Items/Fireball";
-import InventorySystem from "./Systems/InventorySystem";
 import ScoreSystem from "./Systems/ScoreSystem";
-import Deadly from "./Objects/Platforms/Deadly";
-import PlatformManager from "./Managers/PlatformManager";
+import InventorySystem from "./Systems/InventorySystem";
 import ScreenManager from "./Managers/ScreenManager";
+import PlatformManager from "./Managers/PlatformManager";
+import Fireball from "./Objects/Items/Fireball";
+import { STATE } from "./Objects/GameObject";
 
-enum GAMESTATE {
-    MAINMENU,
+export enum GAMESTATE {
+    GAMEPLAY, // game
+    RETRY, // can continue current game with lives
     NEWGAME, // game setup
-    GAMEPLAY,
-    GAMEOVER
+    MAINMENU, // initiates new game
+    GAMEOVER // no more lives remaining return to mainmenu or start anew?
 }
 
 // game variables
 let stage:createjs.StageGL;
 let canvas:HTMLCanvasElement;
+let gameState:GAMESTATE;
 
 // assetmanager object
 let assetManager:AssetManager;
@@ -34,8 +35,8 @@ let assetManager:AssetManager;
 let background:createjs.Sprite;
 let spaceMan:Player;
 let placeholderItem:Fireball;
-let screenMovement:ScreenManager;
-let platformManager:PlatformManager;
+let screenM:ScreenManager;
+let platformM:PlatformManager;
 let score:ScoreSystem;
 let inventory:InventorySystem;
 
@@ -48,22 +49,22 @@ function onReady(e:createjs.Event):void {
     stage.addChild(background);
 
     //#region // init Stage Objects
-    spaceMan = new Player(stage, assetManager);
 
-    screenMovement = new ScreenManager();
+    gameState = GAMESTATE.MAINMENU;
+
+    screenM = new ScreenManager(stage, assetManager);
     
-    platformManager = new PlatformManager(stage, assetManager);
-    platformManager.SetupStart();
-
+    spaceMan = new Player(stage, screenM.GUI, screenM.MainMenu, assetManager);
+    
+    platformM = new PlatformManager(stage, assetManager);
+    
     // placeholderItem = new Fireball(stage, assetManager);
     // placeholderItem.positionMe(135, 100);
     // placeholderItem.scaleMe(2);
     
-    stage.addChild(spaceMan.sprite);
-    
-    inventory = new InventorySystem(stage, assetManager, placeholderItem);
+    inventory = new InventorySystem(stage, screenM.GUI, assetManager, placeholderItem);
 
-    score = new ScoreSystem(stage, assetManager);
+    score = new ScoreSystem(screenM.GUI, assetManager);
     
     //events
     this.stage.on("onPlatform", onPlatform);
@@ -83,7 +84,7 @@ function onReady(e:createjs.Event):void {
 function onPlatform(e:createjs.Event):void {
     spaceMan.Jumping = true;
     spaceMan.direction = DIRECTION.UP;
-    if (spaceMan.gainedPoints > 0) {
+    if (spaceMan.gainedPoints != 0) { // only calculate if gained points isnt 0  
         //console.debug("add platform points");
         score.Add(spaceMan.gainedPoints);
         spaceMan.gainedPoints = 0;
@@ -113,14 +114,90 @@ function onTick(e:createjs.Event):void {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
 
     // This is your game loop :)
-    screenMovement.Update(spaceMan, platformManager);
+    
     spaceMan.Update();
-    inventory.Update(spaceMan);
     score.Update();
-    //placeholderItem.ItemUpdate(spaceMan);
+    gameState = screenM.Update(spaceMan, platformM, stage, gameState);
+    
+    //screenM.Update holds a similar swtich statement
+    //this gameState switch controls gameplay elements
+    switch(gameState) {
+            
+        case GAMESTATE.GAMEPLAY:
+            inventory.Update(spaceMan);
+            platformM.Update(spaceMan);
+            //enemy update;
+            //placeholderItem.ItemUpdate(spaceMan);
 
-    platformManager.Update(spaceMan);
+            //Handle starting the game and purposefully losing a life
+            spaceMan.sprite.on("mousedown", (e:createjs.Event) => { 
+                screenM.SpritePlayGameInfo.visible = false;
+                spaceMan.state = STATE.ACTIVE;
+                e.remove();
+            });
+            spaceMan.sprite.on("pressup", (e:createjs.Event) => { 
+                spaceMan.LoseLifeRetry(1);
+                e.remove();
+            });
 
+            //change state depending on character status
+            if (spaceMan.state == STATE.HURT) {
+                gameState = GAMESTATE.RETRY;
+            }
+            else if (spaceMan.state == STATE.DYING) {
+                gameState = GAMESTATE.GAMEOVER;
+            }
+            break;
+            
+
+        case GAMESTATE.RETRY:
+            stage.on("stagemousemove", () => { // event that controls pos of retry mode player
+                spaceMan.mouseX = stage.mouseX;
+                spaceMan.mouseY = stage.mouseY;
+            });
+            
+            // on mouse down check to start gameplay
+            spaceMan.sprite.on("mousedown", (e:createjs.Event) => {
+            
+                //move to end of player tween
+                // or check if ready to spawn and do this
+                spaceMan.state = STATE.ACTIVE;    
+                spaceMan.direction = DIRECTION.DOWN;
+                gameState = GAMESTATE.GAMEPLAY;
+                e.remove();
+                
+            });
+            break;
+
+        case GAMESTATE.NEWGAME:
+            score.score = 0;
+            score.score = -1; // fixes glitch where score starts at 0
+            spaceMan.AddMouseMovementController();
+            spaceMan.state = STATE.IDLE;
+            spaceMan.positionMe(STAGE_WIDTH/2, STAGE_HEIGHT/2+(STAGE_HEIGHT/2)/2);// set spawn
+            gameState = GAMESTATE.GAMEPLAY;
+            break;
+
+        case GAMESTATE.MAINMENU:
+            stage.on("pressup", (e:createjs.Event) => {
+                screenM.MainMenu.visible = false;
+                gameState = GAMESTATE.NEWGAME;
+                e.remove();
+            })
+            break;
+
+        case GAMESTATE.GAMEOVER:
+            //console.log("GAMEOVER");
+            platformM.platforms = []; // set platforms array to 0;
+            stage.on("click", (e:createjs.Event) => {
+                
+                score.difficulty = 0;
+                gameState = GAMESTATE.MAINMENU;
+                e.remove();
+            })
+            break;
+    }
+    
     // update the stage!
     stage.update();
 }

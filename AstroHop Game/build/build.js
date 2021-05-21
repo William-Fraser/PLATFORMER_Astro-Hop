@@ -10150,12 +10150,18 @@ class GameCharacter extends GameObject_1.default {
         let sprite = this._sprite;
         if (this._state == GameObject_1.STATE.IDLE) {
         }
-        else if (this._state == GameObject_1.STATE.ACTIVE) {
+        else if (this._state == GameObject_1.STATE.ACTIVE || this._state == GameObject_1.STATE.HURT) {
             if (this._direction == DIRECTION.LEFT) {
                 sprite.x -= this._movementSpeed;
             }
             else if (this._direction == DIRECTION.RIGHT) {
                 sprite.x += this._movementSpeed;
+            }
+            else if (this._direction == DIRECTION.UP) {
+                sprite.y -= this._movementSpeed;
+            }
+            else if (this._direction == DIRECTION.DOWN) {
+                sprite.y += this._movementSpeed;
             }
         }
     }
@@ -10179,17 +10185,23 @@ const Constants_1 = __webpack_require__(/*! ../Constants */ "./src/Constants.ts"
 const Toolkit_1 = __webpack_require__(/*! ../Toolkit */ "./src/Toolkit.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/Characters/GameCharacter.ts");
 const GameObject_1 = __webpack_require__(/*! ../Objects/GameObject */ "./src/Objects/GameObject.ts");
+const ScreenManager_1 = __webpack_require__(/*! ../Managers/ScreenManager */ "./src/Managers/ScreenManager.ts");
 class Player extends GameCharacter_1.default {
-    constructor(stage, assetManager) {
+    constructor(stage, hud, mainMenu, assetManager) {
         super(stage, assetManager);
+        this.range = 15;
         this._timeToJump = false;
         this._jumpPower = Constants_1.PLAYER_POWERDEFAULT;
         this._jumpWeight = Constants_1.PLAYER_WEIGHTDEFAULT;
         this._fallingGravity = Constants_1.PLAYER_GRAVITYDEFAULT;
         this._scrollHeight = false;
         this._spacebarIsPressed = false;
-        this._lifePoints = 3;
+        this._life = 0;
+        this.lifeStatus = new createjs.Container();
+        this._readyToSpawn = false;
+        this._timeToFall = false;
         this.gainedPoints = 0;
+        this._state = GameObject_1.STATE.ACTIVE;
         this._direction = GameCharacter_1.DIRECTION.DOWN;
         this.stage.mouseMoveOutside = true;
         this._movementSpeed = 1;
@@ -10199,17 +10211,24 @@ class Player extends GameCharacter_1.default {
         stage.addChild(this._sprite);
         this.lifeSprite = assetManager.getSprite("assets", "Astronaught/idle-nocolor", 20, 87);
         this.scaleMe(2);
-        stage.addChild(this.lifeSprite);
+        this.lifeStatus.addChild(this.lifeSprite);
         this.bmpTxtScore = new createjs.BitmapText("0", assetManager.getSpriteSheet("glyphs"));
         this.bmpTxtScore.letterSpacing = 2;
         this.bmpTxtScore.scaleX = .7;
         this.bmpTxtScore.scaleY = .7;
         this.bmpTxtScore.x = 40;
         this.bmpTxtScore.y = 65;
-        stage.addChild(this.bmpTxtScore);
+        this.lifeStatus.addChild(this.bmpTxtScore);
+        hud.addChildAt(this.lifeStatus, ScreenManager_1.GUI.LIFE);
+        this.titleRun = assetManager.getSprite("assets", "Astronaught/Run/sideRunning", 0, 0);
+        this.titleRun.play();
+        this.titleRun.scaleX = 2.3;
+        this.titleRun.scaleY = 2.3;
+        this.titleRun.x = Constants_1.STAGE_WIDTH / 2;
+        this.titleRun.y = Constants_1.STAGE_HEIGHT / 2 + this.titleRun.getBounds().height;
+        mainMenu.addChild(this.titleRun);
         this.eventSpacebarUseItem = new createjs.Event("onUseItem", true, false);
-        this.MouseMovementController();
-        this.positionMe(Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2);
+        this.sprite.visible = false;
     }
     get Jumping() { return this._timeToJump; }
     set Jumping(value) { this._timeToJump = value; }
@@ -10221,15 +10240,21 @@ class Player extends GameCharacter_1.default {
     set gravity(value) { this._fallingGravity = value; }
     set scrollHeight(value) { this._scrollHeight = value; }
     set spacebarIsPressed(value) { this._spacebarIsPressed = value; }
-    MouseMovementController() {
-        this.stage.on("pressmove", () => {
-            this._sprite.x = this.stage.mouseX;
-        });
+    set mouseX(value) { this._mouseX = value; }
+    set mouseY(value) { this._mouseY = value; }
+    get readyToSpawn() { return this._readyToSpawn; }
+    MoveWithMouse(e) {
+        e.target.x = this.stage.mouseX;
     }
-    JumpOffPlatform() {
+    JumpOnPlatform() {
         if (this._timeToJump) {
             this._movementSpeed = this._jumpPower;
             this._timeToJump = false;
+            this._sprite.gotoAndPlay("Astronaught/Jump/Jump");
+            this._sprite.on("animationend", (e) => {
+                this._sprite.stop();
+                e.remove();
+            });
             if (this._jumpPower != Constants_1.PLAYER_POWERDEFAULT) {
                 this._jumpPower = Constants_1.PLAYER_POWERDEFAULT;
             }
@@ -10240,9 +10265,14 @@ class Player extends GameCharacter_1.default {
         this._movementSpeed -= this._jumpWeight;
         if (this._movementSpeed <= 0) {
             this._direction = GameCharacter_1.DIRECTION.DOWN;
+            this._timeToFall = true;
         }
     }
     Fall() {
+        if (this._timeToFall) {
+            this._sprite.gotoAndPlay("Astronaught/Falling/fallingGhost");
+            this._timeToFall = false;
+        }
         this._sprite.y += this._movementSpeed;
         this._movementSpeed += this._fallingGravity;
         this._scrollHeight = false;
@@ -10267,16 +10297,104 @@ class Player extends GameCharacter_1.default {
             });
         });
     }
-    PlatformHit(platform) {
+    CheckForRetry() {
+        if (this._life > 0) {
+            this._state = GameObject_1.STATE.HURT;
+            this._direction = GameCharacter_1.DIRECTION.NULL;
+        }
+    }
+    CheckForGameOver() {
+        if (this._life == 0) {
+            console.log("Call GAMEOVER");
+            this._state = GameObject_1.STATE.DYING;
+        }
+    }
+    MoveTowardsMouse() {
+        let moveOnY;
+        this._movementSpeed = 7;
+        if (this._sprite.x >= this._mouseX - this.range && this._sprite.x <= this._mouseX + this.range && this._sprite.y >= this._mouseY - this.range && this._sprite.y <= this._mouseY + this.range) {
+            this._direction = GameCharacter_1.DIRECTION.NULL;
+        }
+        else {
+            if (this._sprite.y == this._mouseY) {
+                moveOnY = false;
+            }
+            else if (this._sprite.x == this._mouseX) {
+                moveOnY = true;
+            }
+            else {
+                let quadrent = 0;
+                if (this._mouseX > this._sprite.x) {
+                    quadrent = 1;
+                    if (this._mouseY > this._sprite.y) {
+                        quadrent = 3;
+                    }
+                }
+                else if (this._mouseY > this._sprite.y) {
+                    quadrent = 2;
+                }
+                if (quadrent == 0) {
+                    if ((this._sprite.x - this._mouseX) <= (this._sprite.y - this._mouseY)) {
+                        moveOnY = true;
+                    }
+                    else {
+                        moveOnY = false;
+                    }
+                }
+                else if (quadrent == 1) {
+                    if ((this._mouseX - this._sprite.x) <= (this._sprite.y - this._mouseY)) {
+                        moveOnY = true;
+                    }
+                    else {
+                        moveOnY = false;
+                    }
+                }
+                else if (quadrent == 2) {
+                    if ((this._sprite.x - this._mouseX) <= (this._mouseY - this._sprite.y)) {
+                        moveOnY = true;
+                    }
+                    else {
+                        moveOnY = false;
+                    }
+                }
+                else if (quadrent == 3) {
+                    if ((this._mouseX - this._sprite.x) <= (this._mouseY - this._sprite.y)) {
+                        moveOnY = true;
+                    }
+                    else {
+                        moveOnY = false;
+                    }
+                }
+            }
+            if (moveOnY == false) {
+                if (this._mouseX > this._sprite.x) {
+                    this._direction = GameCharacter_1.DIRECTION.RIGHT;
+                }
+                else {
+                    this._direction = GameCharacter_1.DIRECTION.LEFT;
+                }
+            }
+            else {
+                if (this._mouseY > this._sprite.y) {
+                    this._direction = GameCharacter_1.DIRECTION.DOWN;
+                }
+                else {
+                    this._direction = GameCharacter_1.DIRECTION.UP;
+                }
+            }
+        }
+    }
+    AdjustRetryMovementSpeed() {
+    }
+    AddMouseMovementController() {
+        this._sprite.on("pressmove", this.MoveWithMouse);
+    }
+    HitPlatform(platform) {
         if (Toolkit_1.pointHit(this._sprite, platform.sprite, -6, 14) ||
             Toolkit_1.pointHit(this._sprite, platform.sprite, 6, 14) ||
             Toolkit_1.pointHit(this._sprite, platform.sprite, 0, 9) ||
             Toolkit_1.pointHit(this._sprite, platform.sprite, 0, 14)) {
-            let eventPlatform = platform;
-            if (!platform.landOnce) {
-                this.gainedPoints = platform.scoreValue;
-                platform.landOnce = true;
-            }
+            this.gainedPoints = platform.GivePoints();
             platform.UseAbility(this);
             platform.sprite.dispatchEvent(platform.eventPlayerOnPlatform);
         }
@@ -10285,34 +10403,72 @@ class Player extends GameCharacter_1.default {
         if (value < 0) {
             value * -1;
         }
-        this._lifePoints += value;
+        this._life += value;
     }
     LoseLifeGainIFrames(livesLost) {
         if (!this._iFrames) {
             if (livesLost < 0) {
                 livesLost * -1;
             }
-            this._lifePoints -= livesLost;
+            this._life -= livesLost;
             this.StartIFrames();
+        }
+        this.CheckForGameOver();
+    }
+    LoseLifeRetry(livesLost) {
+        if (this._state != GameObject_1.STATE.HURT && this._state != GameObject_1.STATE.DYING) {
+            if (livesLost < 0) {
+                livesLost * -1;
+            }
+            this._life -= livesLost;
+            this.CheckForRetry();
+            this.CheckForGameOver();
+        }
+    }
+    RetryStateAnimation() {
+        let animating;
+        this._sprite.stop();
+        this.MoveTowardsMouse();
+        if (!animating) {
+            animating = true;
+            createjs.Tween.get(this._sprite).to({ alpha: .3 }, 200).call(() => {
+                createjs.Tween.get(this._sprite).to({ alpha: 1 }, 900).call(() => {
+                    createjs.Tween.get(this._sprite).to({ alpha: .3 }, 400).call(() => {
+                        createjs.Tween.get(this._sprite).to({ alpha: 1 }, 600).call(() => {
+                            animating = false;
+                        });
+                    });
+                });
+            });
+        }
+        else if (animating != true) {
+            animating = false;
         }
     }
     Update() {
-        if (this._state == GameObject_1.STATE.GONE) {
-            return;
-        }
-        if (this._spacebarIsPressed) {
-            this.stage.dispatchEvent(this.eventSpacebarUseItem);
-            this._spacebarIsPressed = false;
-        }
         this.detectEdges();
-        if (this._direction == GameCharacter_1.DIRECTION.UP) {
-            this.JumpOffPlatform();
+        if (this._life >= 0) {
+            this.bmpTxtScore.text = this._life.toString();
         }
-        if (this._direction == GameCharacter_1.DIRECTION.DOWN) {
-            this.Fall();
+        if (this._state == GameObject_1.STATE.ACTIVE) {
+            if (this._spacebarIsPressed) {
+                this.stage.dispatchEvent(this.eventSpacebarUseItem);
+                this._spacebarIsPressed = false;
+            }
+            if (this._direction == GameCharacter_1.DIRECTION.UP) {
+                this.JumpOnPlatform();
+            }
+            if (this._direction == GameCharacter_1.DIRECTION.DOWN) {
+                this.Fall();
+            }
+            if (this._sprite.y > Constants_1.STAGE_HEIGHT + (this._sprite.getBounds().height / 2)) {
+                this.LoseLifeRetry(1);
+            }
+            this.CheckForGameOver();
         }
-        if (this._lifePoints > 0) {
-            this.bmpTxtScore.text = this._lifePoints.toString();
+        else if (this._state == GameObject_1.STATE.HURT) {
+            this.RetryStateAnimation();
+            super.Update();
         }
     }
 }
@@ -10335,14 +10491,14 @@ exports.ASSET_MANIFEST = exports.ITEM_MOONSHOE_GRAVITY = exports.ITEM_MOONSHOE_W
 exports.STAGE_WIDTH = 400;
 exports.STAGE_HEIGHT = 600;
 exports.FRAME_RATE = 30;
-exports.PLAYER_POWERDEFAULT = 17;
+exports.PLAYER_POWERDEFAULT = 23;
 exports.PLAYER_WEIGHTDEFAULT = 1.4;
 exports.PLAYER_GRAVITYDEFAULT = 0.6;
 exports.PLATFORM_BREAKABLE_SCOREVALUE = 4;
 exports.PLATFORM_BREAKABLE_USES = 3;
 exports.PLATFORM_BREAKING_USES = 6;
 exports.PLATFORM_STICKY_SCOREVALUE = 2;
-exports.PLATFORM_STICKY_POWER = 11;
+exports.PLATFORM_STICKY_POWER = 17;
 exports.PLATFORM_MOVING_SCOREVALUE = 3;
 exports.PLATFORM_MOVING_SPEED = 0;
 exports.ITEM_MOONSHOE_WEIGHT = 0.5;
@@ -10387,43 +10543,46 @@ exports.ASSET_MANIFEST = [
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GAMESTATE = void 0;
 __webpack_require__(/*! createjs */ "./node_modules/createjs/builds/1.0.0/createjs.min.js");
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./Characters/GameCharacter */ "./src/Characters/GameCharacter.ts");
 const AssetManager_1 = __webpack_require__(/*! ./Managers/AssetManager */ "./src/Managers/AssetManager.ts");
 const Player_1 = __webpack_require__(/*! ./Characters/Player */ "./src/Characters/Player.ts");
-const InventorySystem_1 = __webpack_require__(/*! ./Systems/InventorySystem */ "./src/Systems/InventorySystem.ts");
 const ScoreSystem_1 = __webpack_require__(/*! ./Systems/ScoreSystem */ "./src/Systems/ScoreSystem.ts");
-const PlatformManager_1 = __webpack_require__(/*! ./Managers/PlatformManager */ "./src/Managers/PlatformManager.ts");
+const InventorySystem_1 = __webpack_require__(/*! ./Systems/InventorySystem */ "./src/Systems/InventorySystem.ts");
 const ScreenManager_1 = __webpack_require__(/*! ./Managers/ScreenManager */ "./src/Managers/ScreenManager.ts");
+const PlatformManager_1 = __webpack_require__(/*! ./Managers/PlatformManager */ "./src/Managers/PlatformManager.ts");
+const GameObject_1 = __webpack_require__(/*! ./Objects/GameObject */ "./src/Objects/GameObject.ts");
 var GAMESTATE;
 (function (GAMESTATE) {
-    GAMESTATE[GAMESTATE["MAINMENU"] = 0] = "MAINMENU";
-    GAMESTATE[GAMESTATE["NEWGAME"] = 1] = "NEWGAME";
-    GAMESTATE[GAMESTATE["GAMEPLAY"] = 2] = "GAMEPLAY";
-    GAMESTATE[GAMESTATE["GAMEOVER"] = 3] = "GAMEOVER";
-})(GAMESTATE || (GAMESTATE = {}));
+    GAMESTATE[GAMESTATE["GAMEPLAY"] = 0] = "GAMEPLAY";
+    GAMESTATE[GAMESTATE["RETRY"] = 1] = "RETRY";
+    GAMESTATE[GAMESTATE["NEWGAME"] = 2] = "NEWGAME";
+    GAMESTATE[GAMESTATE["MAINMENU"] = 3] = "MAINMENU";
+    GAMESTATE[GAMESTATE["GAMEOVER"] = 4] = "GAMEOVER";
+})(GAMESTATE = exports.GAMESTATE || (exports.GAMESTATE = {}));
 let stage;
 let canvas;
+let gameState;
 let assetManager;
 let background;
 let spaceMan;
 let placeholderItem;
-let screenMovement;
-let platformManager;
+let screenM;
+let platformM;
 let score;
 let inventory;
 function onReady(e) {
     console.log(">> adding sprites to game");
     background = assetManager.getSprite("assets", "Space Background", 0, 0);
     stage.addChild(background);
-    spaceMan = new Player_1.default(stage, assetManager);
-    screenMovement = new ScreenManager_1.default();
-    platformManager = new PlatformManager_1.default(stage, assetManager);
-    platformManager.SetupStart();
-    stage.addChild(spaceMan.sprite);
-    inventory = new InventorySystem_1.default(stage, assetManager, placeholderItem);
-    score = new ScoreSystem_1.default(stage, assetManager);
+    gameState = GAMESTATE.MAINMENU;
+    screenM = new ScreenManager_1.default(stage, assetManager);
+    spaceMan = new Player_1.default(stage, screenM.GUI, screenM.MainMenu, assetManager);
+    platformM = new PlatformManager_1.default(stage, assetManager);
+    inventory = new InventorySystem_1.default(stage, screenM.GUI, assetManager, placeholderItem);
+    score = new ScoreSystem_1.default(screenM.GUI, assetManager);
     this.stage.on("onPlatform", onPlatform);
     this.stage.on("onPickup", onPickup);
     this.stage.on("onUseItem", onUseItem);
@@ -10435,7 +10594,7 @@ function onReady(e) {
 function onPlatform(e) {
     spaceMan.Jumping = true;
     spaceMan.direction = GameCharacter_1.DIRECTION.UP;
-    if (spaceMan.gainedPoints > 0) {
+    if (spaceMan.gainedPoints != 0) {
         score.Add(spaceMan.gainedPoints);
         spaceMan.gainedPoints = 0;
     }
@@ -10456,11 +10615,65 @@ function SpacebarPressed(e) {
 }
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
-    screenMovement.Update(spaceMan, platformManager);
     spaceMan.Update();
-    inventory.Update(spaceMan);
     score.Update();
-    platformManager.Update(spaceMan);
+    gameState = screenM.Update(spaceMan, platformM, stage, gameState);
+    switch (gameState) {
+        case GAMESTATE.GAMEPLAY:
+            inventory.Update(spaceMan);
+            platformM.Update(spaceMan);
+            spaceMan.sprite.on("mousedown", (e) => {
+                screenM.SpritePlayGameInfo.visible = false;
+                spaceMan.state = GameObject_1.STATE.ACTIVE;
+                e.remove();
+            });
+            spaceMan.sprite.on("pressup", (e) => {
+                spaceMan.LoseLifeRetry(1);
+                e.remove();
+            });
+            if (spaceMan.state == GameObject_1.STATE.HURT) {
+                gameState = GAMESTATE.RETRY;
+            }
+            else if (spaceMan.state == GameObject_1.STATE.DYING) {
+                gameState = GAMESTATE.GAMEOVER;
+            }
+            break;
+        case GAMESTATE.RETRY:
+            stage.on("stagemousemove", () => {
+                spaceMan.mouseX = stage.mouseX;
+                spaceMan.mouseY = stage.mouseY;
+            });
+            spaceMan.sprite.on("mousedown", (e) => {
+                spaceMan.state = GameObject_1.STATE.ACTIVE;
+                spaceMan.direction = GameCharacter_1.DIRECTION.DOWN;
+                gameState = GAMESTATE.GAMEPLAY;
+                e.remove();
+            });
+            break;
+        case GAMESTATE.NEWGAME:
+            score.score = 0;
+            score.score = -1;
+            spaceMan.AddMouseMovementController();
+            spaceMan.state = GameObject_1.STATE.IDLE;
+            spaceMan.positionMe(Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2 + (Constants_1.STAGE_HEIGHT / 2) / 2);
+            gameState = GAMESTATE.GAMEPLAY;
+            break;
+        case GAMESTATE.MAINMENU:
+            stage.on("pressup", (e) => {
+                screenM.MainMenu.visible = false;
+                gameState = GAMESTATE.NEWGAME;
+                e.remove();
+            });
+            break;
+        case GAMESTATE.GAMEOVER:
+            platformM.platforms = [];
+            stage.on("click", (e) => {
+                score.difficulty = 0;
+                gameState = GAMESTATE.MAINMENU;
+                e.remove();
+            });
+            break;
+    }
     stage.update();
 }
 function main() {
@@ -10555,27 +10768,6 @@ exports.default = AssetManager;
 
 /***/ }),
 
-/***/ "./src/Managers/GameManager.ts":
-/*!*************************************!*\
-  !*** ./src/Managers/GameManager.ts ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class GameManager {
-    constructor(stage, assetManager) {
-        this.stage = stage;
-        this.assetManager = assetManager;
-    }
-}
-exports.default = GameManager;
-
-
-/***/ }),
-
 /***/ "./src/Managers/PlatformManager.ts":
 /*!*****************************************!*\
   !*** ./src/Managers/PlatformManager.ts ***!
@@ -10586,17 +10778,49 @@ exports.default = GameManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Platform_1 = __webpack_require__(/*! ../Objects/Platform */ "./src/Objects/Platform.ts");
-const Moving_1 = __webpack_require__(/*! ../Objects/Platforms/Moving */ "./src/Objects/Platforms/Moving.ts");
-const GameManager_1 = __webpack_require__(/*! ./GameManager */ "./src/Managers/GameManager.ts");
 const Toolkit_1 = __webpack_require__(/*! ../Toolkit */ "./src/Toolkit.ts");
 const Constants_1 = __webpack_require__(/*! ../Constants */ "./src/Constants.ts");
-class PlatformManager extends GameManager_1.default {
+const Platform_1 = __webpack_require__(/*! ../Objects/Platform */ "./src/Objects/Platform.ts");
+const Moving_1 = __webpack_require__(/*! ../Objects/Platforms/Moving */ "./src/Objects/Platforms/Moving.ts");
+const Breaking_1 = __webpack_require__(/*! ../Objects/Platforms/Breaking */ "./src/Objects/Platforms/Breaking.ts");
+const Breakable_1 = __webpack_require__(/*! ../Objects/Platforms/Breakable */ "./src/Objects/Platforms/Breakable.ts");
+const Deadly_1 = __webpack_require__(/*! ../Objects/Platforms/Deadly */ "./src/Objects/Platforms/Deadly.ts");
+const Sticky_1 = __webpack_require__(/*! ../Objects/Platforms/Sticky */ "./src/Objects/Platforms/Sticky.ts");
+class PlatformManager {
     constructor(stage, assetManager) {
-        super(stage, assetManager);
-        this._platforms = new Array();
+        this._platforms = [];
+        this.stage = stage;
+        this.assetManager = assetManager;
     }
     get platforms() { return this._platforms; }
+    set platforms(value) { this._platforms = value; }
+    Create() {
+        this.decideSpawned = Toolkit_1.randomMe(0, 30);
+        if (this.decideSpawned == 1) {
+            this.platformMaker = new Breaking_1.default(this.stage, this.assetManager);
+        }
+        else if (this.decideSpawned == 2) {
+            this.platformMaker = new Breakable_1.default(this.stage, this.assetManager);
+        }
+        else if (this.decideSpawned == 3) {
+            this.platformMaker = new Deadly_1.default(this.stage, this.assetManager);
+        }
+        else if (this.decideSpawned == 4) {
+            this.platformMaker = new Moving_1.default(this.stage, this.assetManager);
+        }
+        else if (this.decideSpawned == 5) {
+            this.platformMaker = new Sticky_1.default(this.stage, this.assetManager);
+        }
+        else {
+            this.platformMaker = new Platform_1.default(this.stage, this.assetManager, "Platforms/Astroid2");
+            this.platformMaker.sprite.scaleX = 2;
+            this.platformMaker.sprite.scaleY = 1.5;
+        }
+        this.platformMaker.positionMe(Toolkit_1.randomMe(this.platformMaker.sprite.getBounds().width / 2 + 20, (Constants_1.STAGE_WIDTH - this.platformMaker.sprite.getBounds().width / 2) - 20), -this.platformMaker.sprite.getBounds().height);
+        this.stage.addChildAt(this.platformMaker.sprite, 1);
+        this._platforms.push(this.platformMaker);
+        console.log("spawn new platform");
+    }
     CheckToCreate() {
         if (this.platforms[this.platforms.length - 1].sprite.y > 32) {
             if (Toolkit_1.randomMe(0, 50) <= 10) {
@@ -10607,42 +10831,40 @@ class PlatformManager extends GameManager_1.default {
             }
         }
     }
-    Create() {
-        this.platformMaker = new Platform_1.default(this.stage, this.assetManager, "placeholderPlatform");
-        this.platformMaker.positionMe(Toolkit_1.randomMe(this.platformMaker.sprite.getBounds().width / 2 + 20, (Constants_1.STAGE_WIDTH - this.platformMaker.sprite.getBounds().width / 2) - 20), -this.platformMaker.sprite.getBounds().height);
-        this.stage.addChild(this.platformMaker.sprite);
-        this._platforms.push(this.platformMaker);
-        console.log("spawn new platform");
+    CheckAndRemoveOnScrollOff() {
+        for (let i = 0; i < this._platforms.length; i++) {
+            if (this._platforms[i].sprite.y >= Constants_1.STAGE_HEIGHT + this._platforms[i].sprite.getBounds().height) {
+                this.stage.removeChild(this._platforms[i].sprite);
+            }
+        }
     }
     SetupStart() {
         let ground = new Platform_1.default(this.stage, this.assetManager, "_600x260Grass_");
         ground.positionMe(0, 450);
-        this.stage.addChild(ground.sprite);
         this._platforms.push(ground);
         for (let i = 0; i <= 3; i++) {
-            let platformMaker;
             if (i == 2) {
-                platformMaker = new Moving_1.default(this.stage, this.assetManager);
+                this.platformMaker = new Moving_1.default(this.stage, this.assetManager);
             }
             else {
-                platformMaker = new Platform_1.default(this.stage, this.assetManager, "placeholderPlatform");
+                this.platformMaker = new Platform_1.default(this.stage, this.assetManager, "Platforms/Astroid2");
+                this.platformMaker.sprite.scaleX = 2;
+                this.platformMaker.sprite.scaleY = 1.5;
             }
-            this.stage.addChild(platformMaker.sprite);
-            this._platforms.push(platformMaker);
+            this._platforms.push(this.platformMaker);
+            this.stage.addChildAt(this._platforms[i].sprite, 1);
         }
         this._platforms[1].positionMe(133, 360);
         this._platforms[2].positionMe(267, 295);
         this._platforms[3].positionMe(200, 170);
-        this._platforms[4].positionMe(300, 90);
-    }
-    RemoveOnScrollOff() {
+        this._platforms[4].positionMe(300, 75);
     }
     Update(player) {
-        console.log(this.platforms[this.platforms.length - 1].sprite.y);
+        this.CheckToCreate();
         for (let i = 0; i < this._platforms.length; i++) {
             this._platforms[i].PlatformUpdate(player);
         }
-        this.CheckToCreate();
+        this.CheckAndRemoveOnScrollOff();
     }
 }
 exports.default = PlatformManager;
@@ -10660,17 +10882,87 @@ exports.default = PlatformManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GUI = void 0;
+const GameCharacter_1 = __webpack_require__(/*! ../Characters/GameCharacter */ "./src/Characters/GameCharacter.ts");
+const Game_1 = __webpack_require__(/*! ../Game */ "./src/Game.ts");
+const Constants_1 = __webpack_require__(/*! ../Constants */ "./src/Constants.ts");
+var GUI;
+(function (GUI) {
+    GUI[GUI["LIFE"] = 0] = "LIFE";
+    GUI[GUI["SCORE"] = 1] = "SCORE";
+    GUI[GUI["INVENTORY"] = 2] = "INVENTORY";
+})(GUI = exports.GUI || (exports.GUI = {}));
 class ScreenManager {
-    ScaleStageFromPlayer(player, platformM) {
-        if (player.Y <= 150) {
+    constructor(stage, assetManager) {
+        this._GUI = new createjs.Container();
+        this._MainMenu = new createjs.Container();
+        stage.addChild(this._MainMenu);
+        this.spriteMenuInfo = assetManager.getSprite("assets", "Instructions/clickAnywhereToStart", Constants_1.STAGE_WIDTH / 2, (Constants_1.STAGE_HEIGHT / 4) * 3);
+        this.spriteMenuInfo.scaleX = 2.5;
+        this.spriteMenuInfo.scaleY = 2;
+        this.spriteMenuInfo.play();
+        this._MainMenu.addChild(this.spriteMenuInfo);
+        this.spritePlayGameInfo = assetManager.getSprite("assets", "Instructions/clickAndHoldPlayer", Constants_1.STAGE_WIDTH / 2 + 50, (Constants_1.STAGE_HEIGHT / 4) * 3 - 55);
+        this.spritePlayGameInfo.scaleX = 2;
+        this.spritePlayGameInfo.scaleY = 2;
+        this.spritePlayGameInfo.visible = false;
+        stage.addChild(this.spritePlayGameInfo);
+        this.spriteFinalScore = assetManager.getSprite("assets", "your Final Score was...", Constants_1.STAGE_WIDTH / 2, (Constants_1.STAGE_HEIGHT / 4 + 40));
+        this.spriteFinalScore.scaleX = 3;
+        this.spriteFinalScore.scaleY = 3;
+        this.spriteFinalScore.visible = false;
+        stage.addChild(this.spriteFinalScore);
+    }
+    get GUI() { return this._GUI; }
+    get MainMenu() { return this._MainMenu; }
+    get SpritePlayGameInfo() { return this.spritePlayGameInfo; }
+    CheckAndScaleStageFromPlayer(player, platformM) {
+        if (player.Y <= 270 && player.direction == GameCharacter_1.DIRECTION.UP) {
             player.scrollHeight = true;
             for (let i = 0; i < platformM.platforms.length; i++) {
                 platformM.platforms[i].sprite.y += player.speed;
             }
         }
     }
-    Update(player, platformM) {
-        this.ScaleStageFromPlayer(player, platformM);
+    Update(player, platformM, stage, gameState) {
+        switch (gameState) {
+            case Game_1.GAMESTATE.GAMEPLAY:
+                this.CheckAndScaleStageFromPlayer(player, platformM);
+                stage.addChild(this._GUI);
+                break;
+            case Game_1.GAMESTATE.RETRY:
+                break;
+            case Game_1.GAMESTATE.NEWGAME:
+                player.GainLife(3);
+                platformM.SetupStart();
+                player.sprite.visible = true;
+                this._GUI.getChildAt(GUI.LIFE).visible = true;
+                this._GUI.getChildAt(GUI.SCORE).visible = true;
+                this.spritePlayGameInfo.visible = true;
+                break;
+            case Game_1.GAMESTATE.MAINMENU:
+                this.MainMenu.visible = true;
+                this.spriteFinalScore.visible = false;
+                this._GUI.getChildAt(GUI.SCORE).visible = false;
+                this._GUI.getChildAt(GUI.SCORE).x = Constants_1.STAGE_WIDTH - this._GUI.getChildAt(GUI.SCORE).getBounds().width * 2;
+                this._GUI.getChildAt(GUI.SCORE).y = 5;
+                this._GUI.getChildAt(GUI.SCORE).scaleX = 1;
+                this._GUI.getChildAt(GUI.SCORE).scaleY = 1;
+                break;
+            case Game_1.GAMESTATE.GAMEOVER:
+                for (let i = 0; i < platformM.platforms.length; i++) {
+                    stage.removeChild(platformM.platforms[i].sprite);
+                }
+                this.spriteFinalScore.visible = true;
+                this._GUI.getChildAt(GUI.SCORE).x = Constants_1.STAGE_WIDTH / 2 - this._GUI.getChildAt(GUI.SCORE).getBounds().width;
+                this._GUI.getChildAt(GUI.SCORE).y = Constants_1.STAGE_HEIGHT / 2.5 - this._GUI.getChildAt(GUI.SCORE).getBounds().height;
+                this._GUI.getChildAt(GUI.SCORE).scaleX = 2.5;
+                this._GUI.getChildAt(GUI.SCORE).scaleY = 2.5;
+                this._GUI.getChildAt(GUI.LIFE).visible = false;
+                player.sprite.visible = false;
+                break;
+        }
+        return gameState;
     }
 }
 exports.default = ScreenManager;
@@ -10814,6 +11106,7 @@ exports.default = Item;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const GameObject_1 = __webpack_require__(/*! ./GameObject */ "./src/Objects/GameObject.ts");
+const GameCharacter_1 = __webpack_require__(/*! ../Characters/GameCharacter */ "./src/Characters/GameCharacter.ts");
 class Platform extends GameObject_1.default {
     constructor(stage, assetManager, spriteOrAnimation) {
         super(stage, assetManager);
@@ -10834,7 +11127,16 @@ class Platform extends GameObject_1.default {
         return this._scoreValue;
     }
     DetectPlayerLanding(player) {
-        player.PlatformHit(this);
+        if (player.direction == GameCharacter_1.DIRECTION.DOWN) {
+            player.HitPlatform(this);
+        }
+    }
+    GivePoints() {
+        if (!this.landOnce) {
+            this.landOnce = true;
+            return this.scoreValue;
+        }
+        return 0;
     }
     UseAbility(player) {
     }
@@ -10850,6 +11152,100 @@ class Platform extends GameObject_1.default {
     }
 }
 exports.default = Platform;
+
+
+/***/ }),
+
+/***/ "./src/Objects/Platforms/Breakable.ts":
+/*!********************************************!*\
+  !*** ./src/Objects/Platforms/Breakable.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Platform_1 = __webpack_require__(/*! ../Platform */ "./src/Objects/Platform.ts");
+const GameObject_1 = __webpack_require__(/*! ../GameObject */ "./src/Objects/GameObject.ts");
+const Constants_1 = __webpack_require__(/*! ../../Constants */ "./src/Constants.ts");
+class Breakable extends Platform_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager, "placeholderPlatform");
+        this._uses = Constants_1.PLATFORM_BREAKABLE_USES;
+        this._scoreValue = Constants_1.PLATFORM_BREAKABLE_SCOREVALUE;
+    }
+    UseAbility() {
+        this._uses--;
+    }
+    killMe() {
+        if ((this._state == GameObject_1.STATE.DYING) || (this._state == GameObject_1.STATE.GONE)) {
+            return;
+        }
+        this._state = GameObject_1.STATE.DYING;
+        createjs.Tween.get(this._sprite).to({ alpha: 0 }, 1000).call(() => {
+            this._sprite.stop();
+            this.stage.removeChild(this._sprite);
+            this._state = GameObject_1.STATE.GONE;
+        });
+    }
+    PlatformUpdate(player) {
+        super.PlatformUpdate(player);
+        if (this._uses == 0) {
+            this.killMe();
+        }
+    }
+}
+exports.default = Breakable;
+
+
+/***/ }),
+
+/***/ "./src/Objects/Platforms/Breaking.ts":
+/*!*******************************************!*\
+  !*** ./src/Objects/Platforms/Breaking.ts ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Breakable_1 = __webpack_require__(/*! ./Breakable */ "./src/Objects/Platforms/Breakable.ts");
+const Constants_1 = __webpack_require__(/*! ../../Constants */ "./src/Constants.ts");
+class Breaking extends Breakable_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager);
+        this._uses = Constants_1.PLATFORM_BREAKING_USES;
+        this._scoreValue = Constants_1.PLATFORM_BREAKABLE_SCOREVALUE;
+    }
+}
+exports.default = Breaking;
+
+
+/***/ }),
+
+/***/ "./src/Objects/Platforms/Deadly.ts":
+/*!*****************************************!*\
+  !*** ./src/Objects/Platforms/Deadly.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Platform_1 = __webpack_require__(/*! ../Platform */ "./src/Objects/Platform.ts");
+class Deadly extends Platform_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager, "placeholderPlatform");
+        this._scoreValue = 0;
+    }
+    UseAbility(player) {
+        player.LoseLifeGainIFrames(1);
+    }
+}
+exports.default = Deadly;
 
 
 /***/ }),
@@ -10873,7 +11269,7 @@ const POWER_MEDIUM = 5.5;
 const POWER_LOW = 1.7;
 class Moving extends Platform_1.default {
     constructor(stage, assetManager) {
-        super(stage, assetManager, "placeholderPlatform");
+        super(stage, assetManager, "Platforms/rocketpad2");
         this._scoreValue = Constants_1.PLATFORM_MOVING_SCOREVALUE;
         this._direction = GameCharacter_1.DIRECTION.LEFT;
         this._speed = Constants_1.PLATFORM_MOVING_SPEED;
@@ -10941,6 +11337,33 @@ exports.default = Moving;
 
 /***/ }),
 
+/***/ "./src/Objects/Platforms/Sticky.ts":
+/*!*****************************************!*\
+  !*** ./src/Objects/Platforms/Sticky.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ../../Constants */ "./src/Constants.ts");
+const Platform_1 = __webpack_require__(/*! ../Platform */ "./src/Objects/Platform.ts");
+class Sticky extends Platform_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager, "placeholderPlatform");
+        this._scoreValue = Constants_1.PLATFORM_STICKY_SCOREVALUE;
+        this._stickyPowerChange = Constants_1.PLATFORM_STICKY_POWER;
+    }
+    UseAbility(player) {
+        player.power = this._stickyPowerChange;
+    }
+}
+exports.default = Sticky;
+
+
+/***/ }),
+
 /***/ "./src/Systems/InventorySystem.ts":
 /*!****************************************!*\
   !*** ./src/Systems/InventorySystem.ts ***!
@@ -10954,7 +11377,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const GameObject_1 = __webpack_require__(/*! ../Objects/GameObject */ "./src/Objects/GameObject.ts");
 const Item_1 = __webpack_require__(/*! ../Objects/Item */ "./src/Objects/Item.ts");
 class InventorySystem {
-    constructor(stage, assetManager, placeHolderParameter) {
+    constructor(stage, gui, assetManager, placeHolderParameter) {
         this._ItemHold = new Array(Item_1.TYPE.TOTALNUMBER);
         this._activeItemIdentity = Item_1.TYPE.NULL;
         this._savedItemIdentity = Item_1.TYPE.NULL;
@@ -11027,8 +11450,9 @@ exports.default = InventorySystem;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ../Constants */ "./src/Constants.ts");
+const ScreenManager_1 = __webpack_require__(/*! ../Managers/ScreenManager */ "./src/Managers/ScreenManager.ts");
 class ScoreSystem {
-    constructor(stage, assetManager) {
+    constructor(gui, assetManager) {
         this._score = -1;
         this.savedScore = this._score;
         this._difficulty = 0;
@@ -11036,12 +11460,13 @@ class ScoreSystem {
         this.bmpTxtScore.letterSpacing = 2;
         this.bmpTxtScore.x = (Constants_1.STAGE_WIDTH);
         this.bmpTxtScore.y = 5;
-        stage.addChild(this.bmpTxtScore);
+        gui.addChildAt(this.bmpTxtScore, ScreenManager_1.GUI.SCORE);
         this._savedLength = this.bmpTxtScore.text.length;
         this._glyphWidth = this.bmpTxtScore.getBounds().width;
     }
     set score(value) { this._score = value; }
     get difficulty() { return this._difficulty; }
+    set difficulty(value) { this._difficulty = value; }
     CheckToIncreaseDifficulty() {
         let scoreChecker = this._score.toString();
         if (!(scoreChecker[scoreChecker.length - 1].indexOf('0')) ||
@@ -11053,7 +11478,7 @@ class ScoreSystem {
     }
     UpdateLength() {
         if (this.bmpTxtScore.text.length != this._savedLength) {
-            this.bmpTxtScore.x -= this._glyphWidth;
+            this.bmpTxtScore.x = Constants_1.STAGE_WIDTH - (this.bmpTxtScore.getBounds().width + this._glyphWidth);
             this._savedLength = this.bmpTxtScore.text.length;
         }
     }

@@ -14,7 +14,7 @@ export default class InventorySystem {
     //passed global
     stage:createjs.StageGL;
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, placeHolderParameter:Fireball) { // replace with array of items
+    constructor(stage:createjs.StageGL, gui:createjs.Container, assetManager:AssetManager, placeHolderParameter:Fireball) { // replace with array of items
         
         //init private fields
         this._ItemHold = new Array(TYPE.TOTALNUMBER);

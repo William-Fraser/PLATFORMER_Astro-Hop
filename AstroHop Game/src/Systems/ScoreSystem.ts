@@ -1,5 +1,6 @@
 import { STAGE_WIDTH } from "../Constants";
 import AssetManager from "../Managers/AssetManager";
+import { GUI } from "../Managers/ScreenManager";
 
 export default class ScoreSystem {
 
@@ -10,7 +11,7 @@ export default class ScoreSystem {
     private _savedLength:number;
     private _glyphWidth:number;
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager) {
+    constructor(gui:createjs.Container, assetManager:AssetManager) {
         
         //inst private fields // starting numbers from starting on a platform that adds 1 to score setting the whole game into motion
         this._score = -1;
@@ -22,7 +23,7 @@ export default class ScoreSystem {
         this.bmpTxtScore.letterSpacing = 2;
         this.bmpTxtScore.x = (STAGE_WIDTH);
         this.bmpTxtScore.y = 5;
-        stage.addChild(this.bmpTxtScore);
+        gui.addChildAt(this.bmpTxtScore, GUI.SCORE);
         
         //private fields derived from bmp
         this._savedLength = this.bmpTxtScore.text.length;
@@ -32,6 +33,7 @@ export default class ScoreSystem {
     // ----- gets/sets
     set score(value:number) { this._score = value;}
     get difficulty():number { return this._difficulty; }
+    set difficulty(value:number) {this._difficulty = value;}
     
     // ----- private methods
     private CheckToIncreaseDifficulty(){
@@ -46,7 +48,7 @@ export default class ScoreSystem {
     }
     private UpdateLength() {
         if (this.bmpTxtScore.text.length != this._savedLength) {
-            this.bmpTxtScore.x -= this._glyphWidth;
+            this.bmpTxtScore.x = STAGE_WIDTH - (this.bmpTxtScore.getBounds().width+this._glyphWidth);
             this._savedLength = this.bmpTxtScore.text.length
         }
     }

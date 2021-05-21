@@ -63,7 +63,7 @@ export default class GameCharacter extends GameObject {
         if (this._state == STATE.IDLE){
 
         }
-        else if (this._state == STATE.ACTIVE) {
+        else if (this._state == STATE.ACTIVE || this._state == STATE.HURT) {// only player will be hurt
 
             if (this._direction == DIRECTION.LEFT) {
                 // move left
@@ -72,6 +72,14 @@ export default class GameCharacter extends GameObject {
             } else if (this._direction == DIRECTION.RIGHT) {
                 // move right
                 sprite.x += this._movementSpeed;
+                
+            }else if (this._direction == DIRECTION.UP) {
+                // move up
+                sprite.y -= this._movementSpeed;
+                
+            }else if (this._direction == DIRECTION.DOWN) {
+                // move down
+                sprite.y += this._movementSpeed;
                 
             }
         }

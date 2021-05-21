@@ -1,6 +1,7 @@
 import AssetManager from "../Managers/AssetManager";
 import GameObject, { STATE } from "./GameObject";
 import Player from "../Characters/Player";
+import { DIRECTION } from "../Characters/GameCharacter";
 
 export default class Platform extends GameObject {
 
@@ -44,10 +45,24 @@ export default class Platform extends GameObject {
 
     // ----- private methods
     private DetectPlayerLanding(player:Player):void {   
-        player.PlatformHit(this);
+        if (player.direction == DIRECTION.DOWN) {
+        
+            player.HitPlatform(this);
+        }
     }
 
     // ----- public methods
+    public GivePoints():number {
+        // if this is the first time hitting the platform add points // could be its own method?
+        if (!this.landOnce) {
+            //console.debug("landOnce");
+            //score.Add(1);
+            this.landOnce = true;
+            
+            return this.scoreValue;
+        }
+        return 0;
+    }
     public UseAbility(player:Player) {
         //overloaded method
     }

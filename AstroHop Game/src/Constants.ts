@@ -4,7 +4,7 @@ export const STAGE_HEIGHT:number = 600;
 export const FRAME_RATE:number = 30;
 
 //Player constants
-export const PLAYER_POWERDEFAULT:number = 17; 
+export const PLAYER_POWERDEFAULT:number = 23; 
 export const PLAYER_WEIGHTDEFAULT:number = 1.4;
 export const PLAYER_GRAVITYDEFAULT:number = 0.6;
 
@@ -14,7 +14,7 @@ export const PLATFORM_BREAKABLE_SCOREVALUE:number = 4; // this applies to all br
 export const PLATFORM_BREAKABLE_USES:number = 3;
 export const PLATFORM_BREAKING_USES:number = 6; 
 export const PLATFORM_STICKY_SCOREVALUE:number = 2;
-export const PLATFORM_STICKY_POWER:number = 11;
+export const PLATFORM_STICKY_POWER:number = 17;
 export const PLATFORM_MOVING_SCOREVALUE:number = 3;
 export const PLATFORM_MOVING_SPEED:number = 0;
 
