@@ -120,6 +120,8 @@ export default class Player extends GameCharacter {
     set mouseX(value:number) { this._mouseX = value; }
     set mouseY(value:number) { this._mouseY = value; }
     get readyToSpawn():boolean { return this._readyToSpawn; }
+    get iFrames():boolean { return this._iFrames; }
+    set iFrames(value:boolean) { this._iFrames = value; }
     //#endregion ----- (all private fields are accessed, in different areas)
 
     // ----- private methods
@@ -142,8 +144,9 @@ export default class Player extends GameCharacter {
             });
 
             //refresh jump power
-            if (this._jumpPower != PLAYER_POWER ) {
+            if (this._jumpPower != PLAYER_POWER || this._fallingGravity != PLAYER_GRAVITY ) {
                 this._jumpPower = PLAYER_POWER; 
+                this._fallingGravity = PLAYER_GRAVITY;
             }
         }
 
@@ -162,8 +165,11 @@ export default class Player extends GameCharacter {
     }
     private Fall() {
         if (this._timeToFall) {
-            this._sprite.gotoAndPlay("Astronaught/Falling/fallingGhost");
+            this._sprite.gotoAndPlay("Astronaught/Falling/falling");
             this._timeToFall = false;
+            if (this._jumpWeight != PLAYER_WEIGHT) {
+                this._jumpWeight = PLAYER_WEIGHT
+            }
         }
         this._sprite.y += this._movementSpeed;
         this._movementSpeed += this._fallingGravity; // increase fall speed by 'falling'Gravity

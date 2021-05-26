@@ -4,6 +4,8 @@ import Player from "../Characters/Player";
 import PlatformManager from "./PlatformManager";
 import { STAGE_HEIGHT, STAGE_WIDTH } from "../Constants";
 import AssetManager from "./AssetManager";
+import ItemManager from "./ItemManager";
+import { FORM, TYPE } from "../Objects/Item";
 
 export enum GUI {
     LIFE,
@@ -55,7 +57,7 @@ export default class ScreenManager {
     get SpritePlayGameInfo():createjs.Sprite { return this.spritePlayGameInfo; }
 
     // ----- private Methods
-    private CheckAndScaleStageFromPlayer(player:Player, platformM:PlatformManager) {
+    private CheckAndScaleStageFromPlayer(player:Player, platformM:PlatformManager, itemM:ItemManager) {
         
         if (player.Y <= 270 && player.direction == DIRECTION.UP) {
             player.scrollHeight = true;
@@ -64,18 +66,23 @@ export default class ScreenManager {
             for (let i = 0; i < platformM.platforms.length; i++) {
                 platformM.platforms[i].sprite.y += player.speed;
             }
+
+            //scroll items
+            for (let i = 0; i < itemM.items.length; i++) {
+                itemM.items[i].sprite.y += player.speed;
+            }
         }
     }
 
     // ----- public methods
 
-    public Update(player:Player, platformM:PlatformManager, stage:createjs.StageGL, gameState:GAMESTATE):GAMESTATE {
+    public Update(player:Player, platformM:PlatformManager, itemM:ItemManager, stage:createjs.StageGL, gameState:GAMESTATE):GAMESTATE {
         
         // this gameState switch controls visual/screen elements
         switch(gameState) {
             
             case GAMESTATE.GAMEPLAY:
-                this.CheckAndScaleStageFromPlayer(player, platformM);
+                this.CheckAndScaleStageFromPlayer(player, platformM, itemM);
                 stage.addChild(this._GUI);
                 break;
 
@@ -83,36 +90,40 @@ export default class ScreenManager {
                 break;
                 
             case GAMESTATE.NEWGAME:    
-                player.GainLife(3);
-                platformM.SetupStart();
-                player.sprite.visible = true;
                 this._GUI.getChildAt(GUI.LIFE).visible = true;
                 //this._GUI.getChildAt(GUI.INVENTORY).visible = true;
                 this._GUI.getChildAt(GUI.SCORE).visible = true;
+                player.GainLife(3);
+                platformM.SetupStart();
+                itemM.SetupStart();
+                player.sprite.visible = true;
                 this.spritePlayGameInfo.visible = true;
                 break;
                     
             case GAMESTATE.MAINMENU:
-                this.MainMenu.visible = true;
-                this.spriteFinalScore.visible = false;
                 this._GUI.getChildAt(GUI.SCORE).visible = false;
                 this._GUI.getChildAt(GUI.SCORE).x = STAGE_WIDTH-this._GUI.getChildAt(GUI.SCORE).getBounds().width*2;
                 this._GUI.getChildAt(GUI.SCORE).y = 5
                 this._GUI.getChildAt(GUI.SCORE).scaleX = 1;
                 this._GUI.getChildAt(GUI.SCORE).scaleY = 1;
+                this.MainMenu.visible = true;
+                this.spriteFinalScore.visible = false;
                 break;
                         
             case GAMESTATE.GAMEOVER:
-                for (let i = 0; i < platformM.platforms.length; i++) {
-                    stage.removeChild(platformM.platforms[i].sprite);
-                }
-                this.spriteFinalScore.visible = true;
                 this._GUI.getChildAt(GUI.SCORE).x = STAGE_WIDTH/2-this._GUI.getChildAt(GUI.SCORE).getBounds().width;
                 this._GUI.getChildAt(GUI.SCORE).y = STAGE_HEIGHT/2.5-this._GUI.getChildAt(GUI.SCORE).getBounds().height;
                 this._GUI.getChildAt(GUI.SCORE).scaleX = 2.5;
                 this._GUI.getChildAt(GUI.SCORE).scaleY = 2.5;
                 this._GUI.getChildAt(GUI.LIFE).visible = false;
                 //this._GUI.getChildAt(GUI.INVENTORY).visible = false;
+                
+                for (let i = 0; i < platformM.platforms.length; i++) {
+                    stage.removeChild(platformM.platforms[i].sprite);
+                }
+                
+                this.spriteFinalScore.visible = true;
+                player.sprite.gotoAndPlay("Astronaught/idle-Color");
                 player.sprite.visible = false;
                 break;
         }

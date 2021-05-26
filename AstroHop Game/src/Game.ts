@@ -14,6 +14,9 @@ import ScreenManager from "./Managers/ScreenManager";
 import PlatformManager from "./Managers/PlatformManager";
 import Fireball from "./Objects/Items/Fireball";
 import { STATE } from "./Objects/GameObject";
+import OneUP from "./Objects/Items/OneUP";
+import Item from "./Objects/Item";
+import ItemManager from "./Managers/ItemManager";
 
 export enum GAMESTATE {
     GAMEPLAY, // game
@@ -34,11 +37,12 @@ let assetManager:AssetManager;
 // game objects
 let background:createjs.Sprite;
 let spaceMan:Player;
-let placeholderItem:Fireball;
 let screenM:ScreenManager;
+let itemM:ItemManager;
 let platformM:PlatformManager;
-let score:ScoreSystem;
+// enemy
 let inventory:InventorySystem;
+let score:ScoreSystem;
 
 // --------------------------------------------------- event handlers
 function onReady(e:createjs.Event):void {
@@ -58,11 +62,11 @@ function onReady(e:createjs.Event):void {
     
     platformM = new PlatformManager(stage, assetManager);
     
-    // placeholderItem = new Fireball(stage, assetManager);
-    // placeholderItem.positionMe(135, 100);
-    // placeholderItem.scaleMe(2);
+    itemM = new ItemManager(stage, assetManager);
+
+    //enemyM
     
-    inventory = new InventorySystem(stage, screenM.GUI, assetManager, placeholderItem);
+    inventory = new InventorySystem(stage, screenM.GUI, assetManager);
 
     score = new ScoreSystem(screenM.GUI, assetManager);
     
@@ -92,8 +96,13 @@ function onPlatform(e:createjs.Event):void {
     //console.debug("player hit a platform at;  X: "+spaceMan.sprite.x+", Y: "+spaceMan.sprite.y); // debug
 }
 function onPickup(e:createjs.Event) {
-    inventory.savedItem = placeholderItem.itemType; // placeholder will change to an item manager for picked up items
-    console.log("Item Picked up");
+    for (let i = 0; i < itemM.items.length; i++) {
+        if (itemM.items[i].beingPickedUp) {
+            console.log("Item Picked up");
+            itemM.items[i].beingPickedUp = false;
+            inventory.AddItemToOpenHold(itemM.items[i]); // placeholder will change to an item manager for picked up items
+        }
+    }
 }
 function onUseItem(e:createjs.Event) {
     inventory.CheckToPullSavedItem();
@@ -117,7 +126,7 @@ function onTick(e:createjs.Event):void {
     
     spaceMan.Update();
     score.Update();
-    gameState = screenM.Update(spaceMan, platformM, stage, gameState);
+    gameState = screenM.Update(spaceMan, platformM, itemM, stage, gameState);
     
     //screenM.Update holds a similar swtich statement
     //this gameState switch controls gameplay elements
@@ -126,8 +135,8 @@ function onTick(e:createjs.Event):void {
         case GAMESTATE.GAMEPLAY:
             inventory.Update(spaceMan);
             platformM.Update(spaceMan);
+            itemM.Update(spaceMan, score);
             //enemy update;
-            //placeholderItem.ItemUpdate(spaceMan);
 
             //Handle starting the game and purposefully losing a life
             spaceMan.sprite.on("mousedown", (e:createjs.Event) => { 
