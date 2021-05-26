@@ -5,7 +5,7 @@ import Platform from "../Platform";
 export default class Deadly extends Platform {
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager) {
-        super(stage, assetManager, "placeholderPlatform");
+        super(stage, assetManager, "Platforms/Comet/CometLarge");
 
         //inst protected fields
         this._scoreValue = 0; // no points for getting hurt

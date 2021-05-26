@@ -25,7 +25,7 @@ export default class PlatformManager {
         //inst private fields
         this._platforms = [];
 
-        //inst global
+        //inst passed global fields
         this.stage = stage;
         this.assetManager = assetManager;
     }
@@ -38,13 +38,14 @@ export default class PlatformManager {
     // ----- private methods
     private Create() {
         this.decideSpawned = randomMe(0, 30);
-        if (this.decideSpawned == 1) {
-            this.platformMaker = new Breaking(this.stage, this.assetManager);
-        }
-        else if (this.decideSpawned == 2) {
-            this.platformMaker = new Breakable(this.stage, this.assetManager);
-        }
-        else if (this.decideSpawned == 3) {
+        // if (this.decideSpawned == 1) {
+        //     this.platformMaker = new Breaking(this.stage, this.assetManager);
+        // }
+        // else if (this.decideSpawned == 2) {
+        //     this.platformMaker = new Breakable(this.stage, this.assetManager);
+        // }
+        // else 
+        if (this.decideSpawned == 3) {
             this.platformMaker = new Deadly(this.stage, this.assetManager);
         }
         else if (this.decideSpawned == 4) {
@@ -55,13 +56,13 @@ export default class PlatformManager {
         }
         else {
             this.platformMaker = new Platform(this.stage, this.assetManager, "Platforms/Astroid2");
-            this.platformMaker.sprite.scaleX = 2;
-            this.platformMaker.sprite.scaleY = 1.5;
+            // this.platformMaker.sprite.scaleX = 2;
+            // this.platformMaker.sprite.scaleY = 1.5;
         }
         this.platformMaker.positionMe( randomMe(this.platformMaker.sprite.getBounds().width/2+20, (STAGE_WIDTH-this.platformMaker.sprite.getBounds().width/2)-20), -this.platformMaker.sprite.getBounds().height);
-        this.stage.addChildAt(this.platformMaker.sprite, 1);
+        this.stage.addChildAt(this.platformMaker.sprite, 2);
         this._platforms.push(this.platformMaker);
-        console.log("spawn new platform")
+        //console.log("spawn new platform")
     }
     //#region // Screenmanager checks
     private CheckToCreate() { // works with Screen manager
@@ -83,7 +84,7 @@ export default class PlatformManager {
         for (let i = 0; i< this._platforms.length; i++){
             if (this._platforms[i].sprite.y >= STAGE_HEIGHT+this._platforms[i].sprite.getBounds().height) {
                 this.stage.removeChild(this._platforms[i].sprite);
-    
+                
             }
         }
     }
@@ -98,21 +99,22 @@ export default class PlatformManager {
         ground.positionMe(0, 450);
         this._platforms.push(ground);
 
-        //set up starting platform
+        //set up starting platforms
         for (let i:number = 0; i <= 3; i++){ // count starts at and includes 0
             
             if (i == 2) {// selects the third platform made
                 this.platformMaker = new Moving(this.stage, this.assetManager);
             } else {
                 this.platformMaker = new Platform(this.stage, this.assetManager, "Platforms/Astroid2");
-                this.platformMaker.sprite.scaleX = 2;
-                this.platformMaker.sprite.scaleY = 1.5;
+                // this.platformMaker.sprite.scaleX = 2;
+                // this.platformMaker.sprite.scaleY = 1.5;
             }
             this._platforms.push(this.platformMaker); // 0 of the maker is 1 \/
             this.stage.addChildAt(this._platforms[i].sprite, 1);
 
         }
 
+        //positioning
         this._platforms[1].positionMe(133, 360); // 0 is ground
         this._platforms[2].positionMe(267, 295);
         this._platforms[3].positionMe(200, 170);

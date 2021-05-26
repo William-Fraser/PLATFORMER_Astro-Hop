@@ -21,6 +21,8 @@ export const PLATFORM_MOVING_SPEED:number = 0;
 //Enemy constants?
 
 //Item constants
+export const ITEM_JETPACK_POWER:number = 60;
+export const ITEM_JETPACK_WEIGHT:number = 2.5;
 export const ITEM_MOONSHOE_WEIGHT:number = 0.5;
 export const ITEM_MOONSHOE_GRAVITY:number = 0.2;
 
