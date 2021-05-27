@@ -1,5 +1,5 @@
-import AssetManager from "../Managers/AssetManager";
 import GameObject, { STATE } from "../Objects/GameObject";
+import AssetManager from "../Managers/AssetManager";
 
 export enum DIRECTION {
     NULL,
@@ -14,6 +14,7 @@ export default class GameCharacter extends GameObject {
     //init protected fields
     protected _movementSpeed:number;
     protected _direction:number;
+    protected _acceleration:number;
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager){
         
@@ -22,6 +23,7 @@ export default class GameCharacter extends GameObject {
 
         // child sets movementSpeed
         // child sets directions
+        // child sets acceleration / it useually changes in accordance to the distance to a static or changing point
     }
     
     // ----- gets / sets;
@@ -33,7 +35,8 @@ export default class GameCharacter extends GameObject {
     }
     get X(){
         return this.sprite.x;
-    }get Y(){
+    }
+    get Y(){
         return this.sprite.y;
     }
     get speed(){
@@ -48,10 +51,11 @@ export default class GameCharacter extends GameObject {
         if ((this._state == STATE.DYING)||(this._state == STATE.GONE)) {return;}
 
         this.idleMe();
-        this._sprite.on("animationend", () => {
+        createjs.Tween.get(this._sprite).to({alpha:0}, 300).call( () => {
             this._sprite.stop();
             this.stage.removeChild(this._sprite);
             this._state = STATE.GONE;
+
         });
         // NEEDS DEATH ANIMATION AFTER SUPER w\/
         this._state = STATE.DYING;

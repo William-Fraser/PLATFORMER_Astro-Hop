@@ -17,6 +17,9 @@ import { STATE } from "./Objects/GameObject";
 import OneUP from "./Objects/Items/OneUP";
 import Item from "./Objects/Item";
 import ItemManager from "./Managers/ItemManager";
+import Spike from "./Characters/Enemies/Spike";
+import Enemy from "./Characters/Enemy";
+import EnemyManager from "./Managers/EnemyManager";
 
 export enum GAMESTATE {
     GAMEPLAY, // game
@@ -40,7 +43,7 @@ let spaceMan:Player;
 let screenM:ScreenManager;
 let itemM:ItemManager;
 let platformM:PlatformManager;
-// enemy
+let enemyM:EnemyManager;
 let inventory:InventorySystem;
 let score:ScoreSystem;
 
@@ -49,7 +52,7 @@ function onReady(e:createjs.Event):void {
     console.log(">> adding sprites to game");
     
     // construct game object sprites
-    background = assetManager.getSprite("assets", "Space Background", 0, 0);
+    background = assetManager.getSprite("assets", "Display/Space Background", 0, 0);
     stage.addChild(background);
 
     //#region // init Stage Objects
@@ -64,7 +67,7 @@ function onReady(e:createjs.Event):void {
     
     itemM = new ItemManager(stage, assetManager);
 
-    //enemyM
+    enemyM = new EnemyManager(stage, assetManager);
     
     inventory = new InventorySystem(stage, screenM.GUI, assetManager);
 
@@ -126,7 +129,7 @@ function onTick(e:createjs.Event):void {
     
     spaceMan.Update();
     score.Update();
-    gameState = screenM.Update(spaceMan, platformM, itemM, stage, gameState);
+    gameState = screenM.Update(spaceMan, platformM, itemM, enemyM, inventory, stage, gameState);
     
     //screenM.Update holds a similar swtich statement
     //this gameState switch controls gameplay elements
@@ -135,8 +138,8 @@ function onTick(e:createjs.Event):void {
         case GAMESTATE.GAMEPLAY:
             inventory.Update(spaceMan);
             platformM.Update(spaceMan);
-            itemM.Update(spaceMan, score);
-            //enemy update;
+            itemM.Update(spaceMan, score, enemyM, inventory);
+            enemyM.Update(spaceMan, platformM);
 
             //Handle starting the game and purposefully losing a life
             spaceMan.sprite.on("mousedown", (e:createjs.Event) => { 

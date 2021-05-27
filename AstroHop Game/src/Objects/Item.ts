@@ -1,5 +1,8 @@
+import Enemy from "../Characters/Enemy";
 import Player from "../Characters/Player";
 import AssetManager from "../Managers/AssetManager";
+import InventorySystem from "../Systems/InventorySystem";
+import ScoreSystem from "../Systems/ScoreSystem";
 import { boxHit } from "../Toolkit";
 import GameObject, { STATE } from "./GameObject";
 
@@ -76,7 +79,7 @@ export default class Item extends GameObject {
         //Overloaded method
     }
 
-    public ItemUpdate(player:Player):void { // named due to no method overloading in JS
+    public ItemUpdate(player:Player, enemy:Enemy, inventory:InventorySystem):void { // named due to no method overloading in JS
         super.Update(); // calls super anyways
         
         // only pickup if pickupform

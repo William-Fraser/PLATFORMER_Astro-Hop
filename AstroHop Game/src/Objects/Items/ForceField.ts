@@ -20,7 +20,7 @@ export default class ForceField extends Item {
         this._duration = 500;
 
         //inst sprite
-        this._sprite = assetManager.getSprite("assets", "AstroHopShieldPlaceHolder", 0, 0);
+        this._sprite = assetManager.getSprite("assets", "Items/AstroHopShieldPlaceHolder", 0, 0);
         this._sprite.play();
         this.scaleMe(2);
         stage.addChildAt(this._sprite, 2);
@@ -33,14 +33,16 @@ export default class ForceField extends Item {
             this._started = true;
             player.iFrames = true;
             this._state = STATE.ACTIVE;
-            createjs.Tween.get(this._sprite).to({alpha:.3}, this._duration).call( () => {
+            createjs.Tween.get(this._sprite).to({alpha:.7}, this._duration).call( () => {
                 createjs.Tween.get(this._sprite).to({alpha:1}, this._duration).call( () => {
-                    createjs.Tween.get(this._sprite).to({alpha:.3}, this._duration).call( () => {
+                    createjs.Tween.get(this._sprite).to({alpha:.5}, this._duration).call( () => {
                         createjs.Tween.get(this._sprite).to({alpha:1}, this._duration).call( () => {
                             createjs.Tween.get(this._sprite).to({alpha:.3}, this._duration).call( () => {
                                 createjs.Tween.get(this._sprite).to({alpha:1}, this._duration).call( () => {
-                                    player.iFrames = false;
-                                    this._state = STATE.GONE;
+                                    createjs.Tween.get(this._sprite).to({alpha:0}, this._duration).call( () => {
+                                        player.iFrames = false;
+                                        this._state = STATE.GONE;
+                                    });
                                 });
                             });
                         });
@@ -51,7 +53,7 @@ export default class ForceField extends Item {
     }
 
     public ItemUpdate(player:Player) {
-        super.ItemUpdate(player);
+        super.ItemUpdate(player, null, null);
 
         if (this._itemForm == FORM.PICKUP) {
             this.scaleMe(1.5);

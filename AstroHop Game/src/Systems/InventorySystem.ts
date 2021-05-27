@@ -1,5 +1,7 @@
+import Enemy from "../Characters/Enemy";
 import Player from "../Characters/Player";
 import AssetManager from "../Managers/AssetManager";
+import EnemyManager from "../Managers/EnemyManager";
 import { STATE } from "../Objects/GameObject";
 import Item, { TYPE, FORM } from "../Objects/Item";
 import Fireball from "../Objects/Items/Fireball";
@@ -13,6 +15,7 @@ export default class InventorySystem {
     private _savedItemDisplayOnce:Item;
 
     //gui sprite
+    private _display:createjs.Container;
     private inventorySquare:createjs.Sprite;
     private inventoryItemInUse:createjs.Sprite;
 
@@ -31,10 +34,17 @@ export default class InventorySystem {
         this.stage = stage;
         this.assetManager = assetManager;
 
+        this._display = new createjs.Container();
+        gui.addChild(this._display);
+
         //inst inventorySquare sprite
+        this.inventorySquare = assetManager.getSprite("assets", "Display/InventoryBox", 5, 5);
+        this.inventorySquare.scaleX = 1.8;
+        this.inventorySquare.scaleY = 1.8;
+        this._display.addChildAt(this.inventorySquare, 0);
 
         //inst inventory item sprite
-        this.inventoryItemInUse = assetManager.getSprite("assets", "Astronaught/Run/sideRunning", 0, 0);
+        this.inventoryItemInUse = assetManager.getSprite("assets", "Display/InventoryBox", 0, 0);
         // this.inventoryItemInUse.play();
         // this.inventoryItemInUse.scaleX = 2.3;
         // this.inventoryItemInUse.scaleY = 2.3;
@@ -46,6 +56,8 @@ export default class InventorySystem {
     // ----- gets/sets
     get activeItem():Item { return this._activeItemHold; }
     get savedItem():Item { return this._savedItemHold; }
+    get display():createjs.Container { return this._display; }
+    get itemInUse():createjs.Sprite { return this.inventoryItemInUse; }
     
     // ----- private methods
     private UseActiveItem(player:Player) {
@@ -70,7 +82,7 @@ export default class InventorySystem {
         }
     }
     private RemoveActiveItem() {
-        this.stage.removeChild(this._activeItemHold.sprite);
+        this._display.removeChild(this._activeItemHold.sprite);
         this._activeItemHold = null;
     }
     private SetInUseSprite() {
@@ -94,26 +106,33 @@ export default class InventorySystem {
             this._savedItemHold = item;
             this._savedItemHold.state = STATE.IDLE;
             this._savedItemHold.itemForm = FORM.SPRITE;
-            this.stage.addChildAt(this._savedItemHold.sprite, 7);
+            this._display.addChildAt(this._savedItemHold.sprite, 1);
         }
         else if (this._activeItemHold == null) {
             this._activeItemHold = item;
             this._activeItemHold.state = STATE.IDLE;
             this._activeItemHold.itemForm = FORM.SPRITE;
             this.SetInUseSprite();
-            this.stage.addChildAt(this._activeItemHold.sprite, 7);
+            this._display.addChildAt(this._activeItemHold.sprite, 2);
         } else { 
             item.state = STATE.GONE;
             //do nothing but remove the item from the stage // handled by item
         }
+    }
+    public RestartInventory() {
+        this._savedItemDisplayOnce = null;
+        if (this._savedItemHold.sprite.isVisible() == true) {
+            this._savedItemHold.sprite.visible = false;
+        }
+        this._savedItemHold = null;
+        this._activeItemHold = null;
+        console.log("nulling inventory");
     }
 
     public Update(player:Player) {
         
         //console.log(`active: ${this._activeItemHold}, saved: ${this._savedItemHold}`);
         if (this._activeItemHold != null) {
-            //update item for use movement animation
-            this._activeItemHold.ItemUpdate(player); 
             
             if (this._activeItemHold.state == STATE.IDLE) {
                 this._activeItemHold.itemForm = FORM.SPRITE;
@@ -132,8 +151,8 @@ export default class InventorySystem {
 
         if (this._savedItemHold != null) {
             // position sprite into inventory
-            this._savedItemHold.sprite.x = 35;
-            this._savedItemHold.sprite.y = 35;
+            this._savedItemHold.sprite.x = 34;
+            this._savedItemHold.sprite.y = 34;
         }
     }
 } 

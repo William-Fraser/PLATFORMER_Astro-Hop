@@ -6,6 +6,7 @@ import GameCharacter, { DIRECTION } from "./GameCharacter";
 import { STATE } from "../Objects/GameObject";
 import { GAMESTATE } from "../Game";
 import { GUI } from "../Managers/ScreenManager";
+import { TYPE } from "../Objects/Item";
  
 export default class Player extends GameCharacter {
 
@@ -23,6 +24,7 @@ export default class Player extends GameCharacter {
     private _mouseY:number;
     private _readyToSpawn:boolean;
     private _timeToFall:boolean; // bool used to start falling animation
+    private _activeItem:TYPE;
     
     //bmp and life sprite
     private bmpTxtScore:createjs.BitmapText;
@@ -55,6 +57,7 @@ export default class Player extends GameCharacter {
         this.lifeStatus = new createjs.Container();
         this._readyToSpawn = false;
         this._timeToFall = false;
+        this._activeItem = TYPE.NULL;
 
         // inst public fields
         this.gainedPoints = 0;
@@ -69,12 +72,12 @@ export default class Player extends GameCharacter {
         this._sprite = assetManager.getSprite("assets", "Astronaught/idle-Color", 0, 0);
         this._sprite.play();
         this.scaleMe(2);
-        stage.addChild(this._sprite);
+        stage.addChildAt(this._sprite, 2);
 
         //#region // create life status for hud
 
         //inst life point sprite
-        this.lifeSprite = assetManager.getSprite("assets", "Astronaught/idle-nocolor", 20, 87);
+        this.lifeSprite = assetManager.getSprite("assets", "Items/OneUp", 20, 87);
         this.scaleMe(2);
         this.lifeStatus.addChild(this.lifeSprite);
         
@@ -90,7 +93,7 @@ export default class Player extends GameCharacter {
         hud.addChildAt(this.lifeStatus, GUI.LIFE); // add container to container
         //#endregion
         //#region Create Sprite for run animation
-        this.titleRun = assetManager.getSprite("assets", "Astronaught/Run/sideRunning", 0, 0);
+        this.titleRun = assetManager.getSprite("assets", "Astronaught/sideRunning", 0, 0);
         this.titleRun.play();
         this.titleRun.scaleX = 2.3;
         this.titleRun.scaleY = 2.3;
@@ -122,6 +125,7 @@ export default class Player extends GameCharacter {
     get readyToSpawn():boolean { return this._readyToSpawn; }
     get iFrames():boolean { return this._iFrames; }
     set iFrames(value:boolean) { this._iFrames = value; }
+    set activeItem(value:TYPE) { this._activeItem = value; }
     //#endregion ----- (all private fields are accessed, in different areas)
 
     // ----- private methods
@@ -135,7 +139,11 @@ export default class Player extends GameCharacter {
             this._timeToJump = false;
             
             //set to animation when it's time to jump so it starts once
-            this._sprite.gotoAndPlay("Astronaught/Jump/Jump");
+            if (this._activeItem == TYPE.JETPACK) {
+                this._sprite.gotoAndStop("Astronaught/Rocketman");
+            } else {
+                this._sprite.gotoAndPlay("Astronaught/Jump");
+            } 
 
             //
             this._sprite.on("animationend", (e:createjs.Event) => {
@@ -165,7 +173,7 @@ export default class Player extends GameCharacter {
     }
     private Fall() {
         if (this._timeToFall) {
-            this._sprite.gotoAndPlay("Astronaught/Falling/falling");
+            this._sprite.gotoAndPlay("Astronaught/falling");
             this._timeToFall = false;
             if (this._jumpWeight != PLAYER_WEIGHT) {
                 this._jumpWeight = PLAYER_WEIGHT
@@ -394,7 +402,6 @@ export default class Player extends GameCharacter {
             animating = false;
         } 
     }
-    
     
     public Update() { // named due to passed field
         

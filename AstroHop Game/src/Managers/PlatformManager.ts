@@ -75,7 +75,7 @@ export default class PlatformManager {
             if (randomMe(0, 50) <= 10) { // randomly spawns a platform
                 this.Create();
             }
-            if (this.platforms[this.platforms.length-1].sprite.y > 100) {
+            if (this.platforms[this.platforms.length-1].sprite.y > 97) {
                 this.Create(); 
             }
         }

@@ -18,7 +18,7 @@ export default class OneUP extends Item {
         this._lifeUp = 1;
 
         //inst animation
-        this._sprite = assetManager.getSprite("assets", "Astronaught/idle-nocolor", 0, 0);
+        this._sprite = assetManager.getSprite("assets", "Items/OneUp", 0, 0);
         stage.addChild(this._sprite);
     }
 

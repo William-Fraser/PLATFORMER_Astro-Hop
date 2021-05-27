@@ -3,6 +3,9 @@ import Player from "../../Characters/Player";
 import Item, { FORM, TYPE } from "../Item";
 import { STATE } from "../GameObject";
 import { STAGE_HEIGHT } from "../../Constants";
+import Enemy from "../../Characters/Enemy";
+import { boxHit, pointHit } from "../../Toolkit";
+import InventorySystem from "../../Systems/InventorySystem";
 
 export default class Fireball extends Item {
 
@@ -29,26 +32,36 @@ export default class Fireball extends Item {
         stage.addChild(this._sprite);
     }
 
+    // ----- private methods
+    private Attack(enemy:Enemy, inventory:InventorySystem) {
+        //console.log(enemy.sprite);
+        if (pointHit(inventory.activeItem.sprite, enemy.sprite)) {
+            enemy.killMe();
+            
+        }
+    }
+
     // ----- public methods 
     public UseItem(player:Player) { // overloaded method
         if (this._readyToFire && this._ammo > 0) {
             console.log("fireball shot") ;
+            this._ammo--;
             this._readyToFire = false; // fire gun and set ready to fire to false to prevent resetting bullet
             this.positionMe(player.sprite.x, player.sprite.y-50);
-            this._ammo--;
             console.log(this._ammo);
+            
         }
     }   
     
-    public ItemUpdate(player:Player):void {
-        super.ItemUpdate(player);
+    public ItemUpdate(player:Player, enemy:Enemy, inventory:InventorySystem):void {
+        super.ItemUpdate(player, null, null);
 
         //reset fire to use again
         if (this._sprite.y < -this._sprite.getBounds().height) {
+            
             this.idleMe();
             this._readyToFire = true;
             console.log("ready to fire");
-            this._sprite.y = 700; // spawn shot below registry point so it doesn't call code constantly
             
             // if ammo is 0 weapon is gone
             if (this._ammo == 0) {
@@ -60,12 +73,16 @@ export default class Fireball extends Item {
             this.idleMe();
             this.startMe();
         }
-        else if (this._itemForm == FORM.INUSE) {
+        else if (this._itemForm == FORM.INUSE && this._state != STATE.GONE) {
+            
             // fire one shot // use readyToFire to stop respawning sprite
             if (!this._readyToFire) {
+                this.Attack(enemy, inventory)
                 this._sprite.y -= this._bulletSpeed;
             } else {
+                //respawn 'idle' sprite
                 this.positionMe(player.X, player.Y-50);
+                this._bulletSpeed = 10;
             }
         }
     }

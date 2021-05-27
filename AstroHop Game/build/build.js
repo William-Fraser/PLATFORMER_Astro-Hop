@@ -10092,6 +10092,71 @@ module.exports.formatError = function(err) {
 
 /***/ }),
 
+/***/ "./src/Characters/Enemies/Spike.ts":
+/*!*****************************************!*\
+  !*** ./src/Characters/Enemies/Spike.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Enemy_1 = __webpack_require__(/*! ../Enemy */ "./src/Characters/Enemy.ts");
+class Spike extends Enemy_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager);
+        this._sprite = assetManager.getSprite("assets", "Enemies/Spike/Idle");
+        this._sprite.play();
+        stage.addChild(this._sprite);
+        this.scaleMe(1.2);
+    }
+}
+exports.default = Spike;
+
+
+/***/ }),
+
+/***/ "./src/Characters/Enemy.ts":
+/*!*********************************!*\
+  !*** ./src/Characters/Enemy.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const GameObject_1 = __webpack_require__(/*! ../Objects/GameObject */ "./src/Objects/GameObject.ts");
+const Toolkit_1 = __webpack_require__(/*! ../Toolkit */ "./src/Toolkit.ts");
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/Characters/GameCharacter.ts");
+class Enemy extends GameCharacter_1.default {
+    constructor(stage, assetManager) {
+        super(stage, assetManager);
+        this._movementSpeed = 7;
+        this._direction = GameCharacter_1.DIRECTION.NULL;
+        this._state = GameObject_1.STATE.ACTIVE;
+        this._acceleration = 0;
+    }
+    Attack(player) {
+        player.LoseLifeGainIFrames(1);
+    }
+    EnemyUpdate(player) {
+        switch (this._state) {
+            case GameObject_1.STATE.ACTIVE:
+                if (Toolkit_1.boxHit(player.sprite, this._sprite)) {
+                    this.Attack(player);
+                }
+                break;
+            default: break;
+        }
+    }
+}
+exports.default = Enemy;
+
+
+/***/ }),
+
 /***/ "./src/Characters/GameCharacter.ts":
 /*!*****************************************!*\
   !*** ./src/Characters/GameCharacter.ts ***!
@@ -10139,7 +10204,7 @@ class GameCharacter extends GameObject_1.default {
             return;
         }
         this.idleMe();
-        this._sprite.on("animationend", () => {
+        createjs.Tween.get(this._sprite).to({ alpha: 0 }, 300).call(() => {
             this._sprite.stop();
             this.stage.removeChild(this._sprite);
             this._state = GameObject_1.STATE.GONE;
@@ -10186,6 +10251,7 @@ const Toolkit_1 = __webpack_require__(/*! ../Toolkit */ "./src/Toolkit.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/Characters/GameCharacter.ts");
 const GameObject_1 = __webpack_require__(/*! ../Objects/GameObject */ "./src/Objects/GameObject.ts");
 const ScreenManager_1 = __webpack_require__(/*! ../Managers/ScreenManager */ "./src/Managers/ScreenManager.ts");
+const Item_1 = __webpack_require__(/*! ../Objects/Item */ "./src/Objects/Item.ts");
 class Player extends GameCharacter_1.default {
     constructor(stage, hud, mainMenu, assetManager) {
         super(stage, assetManager);
@@ -10200,6 +10266,7 @@ class Player extends GameCharacter_1.default {
         this.lifeStatus = new createjs.Container();
         this._readyToSpawn = false;
         this._timeToFall = false;
+        this._activeItem = Item_1.TYPE.NULL;
         this.gainedPoints = 0;
         this._state = GameObject_1.STATE.ACTIVE;
         this._direction = GameCharacter_1.DIRECTION.DOWN;
@@ -10208,8 +10275,8 @@ class Player extends GameCharacter_1.default {
         this._sprite = assetManager.getSprite("assets", "Astronaught/idle-Color", 0, 0);
         this._sprite.play();
         this.scaleMe(2);
-        stage.addChild(this._sprite);
-        this.lifeSprite = assetManager.getSprite("assets", "Astronaught/idle-nocolor", 20, 87);
+        stage.addChildAt(this._sprite, 2);
+        this.lifeSprite = assetManager.getSprite("assets", "Items/OneUp", 20, 87);
         this.scaleMe(2);
         this.lifeStatus.addChild(this.lifeSprite);
         this.bmpTxtScore = new createjs.BitmapText("0", assetManager.getSpriteSheet("glyphs"));
@@ -10220,7 +10287,7 @@ class Player extends GameCharacter_1.default {
         this.bmpTxtScore.y = 65;
         this.lifeStatus.addChild(this.bmpTxtScore);
         hud.addChildAt(this.lifeStatus, ScreenManager_1.GUI.LIFE);
-        this.titleRun = assetManager.getSprite("assets", "Astronaught/Run/sideRunning", 0, 0);
+        this.titleRun = assetManager.getSprite("assets", "Astronaught/sideRunning", 0, 0);
         this.titleRun.play();
         this.titleRun.scaleX = 2.3;
         this.titleRun.scaleY = 2.3;
@@ -10245,6 +10312,7 @@ class Player extends GameCharacter_1.default {
     get readyToSpawn() { return this._readyToSpawn; }
     get iFrames() { return this._iFrames; }
     set iFrames(value) { this._iFrames = value; }
+    set activeItem(value) { this._activeItem = value; }
     MoveWithMouse(e) {
         e.target.x = this.stage.mouseX;
     }
@@ -10252,7 +10320,12 @@ class Player extends GameCharacter_1.default {
         if (this._timeToJump) {
             this._movementSpeed = this._jumpPower;
             this._timeToJump = false;
-            this._sprite.gotoAndPlay("Astronaught/Jump/Jump");
+            if (this._activeItem == Item_1.TYPE.JETPACK) {
+                this._sprite.gotoAndStop("Astronaught/Rocketman");
+            }
+            else {
+                this._sprite.gotoAndPlay("Astronaught/Jump");
+            }
             this._sprite.on("animationend", (e) => {
                 this._sprite.stop();
                 e.remove();
@@ -10273,7 +10346,7 @@ class Player extends GameCharacter_1.default {
     }
     Fall() {
         if (this._timeToFall) {
-            this._sprite.gotoAndPlay("Astronaught/Falling/falling");
+            this._sprite.gotoAndPlay("Astronaught/falling");
             this._timeToFall = false;
             if (this._jumpWeight != Constants_1.PLAYER_WEIGHTDEFAULT) {
                 this._jumpWeight = Constants_1.PLAYER_WEIGHTDEFAULT;
@@ -10563,6 +10636,7 @@ const ScreenManager_1 = __webpack_require__(/*! ./Managers/ScreenManager */ "./s
 const PlatformManager_1 = __webpack_require__(/*! ./Managers/PlatformManager */ "./src/Managers/PlatformManager.ts");
 const GameObject_1 = __webpack_require__(/*! ./Objects/GameObject */ "./src/Objects/GameObject.ts");
 const ItemManager_1 = __webpack_require__(/*! ./Managers/ItemManager */ "./src/Managers/ItemManager.ts");
+const EnemyManager_1 = __webpack_require__(/*! ./Managers/EnemyManager */ "./src/Managers/EnemyManager.ts");
 var GAMESTATE;
 (function (GAMESTATE) {
     GAMESTATE[GAMESTATE["GAMEPLAY"] = 0] = "GAMEPLAY";
@@ -10580,17 +10654,19 @@ let spaceMan;
 let screenM;
 let itemM;
 let platformM;
+let enemyM;
 let inventory;
 let score;
 function onReady(e) {
     console.log(">> adding sprites to game");
-    background = assetManager.getSprite("assets", "Space Background", 0, 0);
+    background = assetManager.getSprite("assets", "Display/Space Background", 0, 0);
     stage.addChild(background);
     gameState = GAMESTATE.MAINMENU;
     screenM = new ScreenManager_1.default(stage, assetManager);
     spaceMan = new Player_1.default(stage, screenM.GUI, screenM.MainMenu, assetManager);
     platformM = new PlatformManager_1.default(stage, assetManager);
     itemM = new ItemManager_1.default(stage, assetManager);
+    enemyM = new EnemyManager_1.default(stage, assetManager);
     inventory = new InventorySystem_1.default(stage, screenM.GUI, assetManager);
     score = new ScoreSystem_1.default(screenM.GUI, assetManager);
     this.stage.on("onPlatform", onPlatform);
@@ -10632,12 +10708,13 @@ function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
     spaceMan.Update();
     score.Update();
-    gameState = screenM.Update(spaceMan, platformM, itemM, stage, gameState);
+    gameState = screenM.Update(spaceMan, platformM, itemM, enemyM, inventory, stage, gameState);
     switch (gameState) {
         case GAMESTATE.GAMEPLAY:
             inventory.Update(spaceMan);
             platformM.Update(spaceMan);
-            itemM.Update(spaceMan, score);
+            itemM.Update(spaceMan, score, enemyM, inventory);
+            enemyM.Update(spaceMan, platformM);
             spaceMan.sprite.on("mousedown", (e) => {
                 screenM.SpritePlayGameInfo.visible = false;
                 spaceMan.state = GameObject_1.STATE.ACTIVE;
@@ -10784,6 +10861,80 @@ exports.default = AssetManager;
 
 /***/ }),
 
+/***/ "./src/Managers/EnemyManager.ts":
+/*!**************************************!*\
+  !*** ./src/Managers/EnemyManager.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Spike_1 = __webpack_require__(/*! ../Characters/Enemies/Spike */ "./src/Characters/Enemies/Spike.ts");
+const Constants_1 = __webpack_require__(/*! ../Constants */ "./src/Constants.ts");
+const Toolkit_1 = __webpack_require__(/*! ../Toolkit */ "./src/Toolkit.ts");
+class EnemyManager {
+    constructor(stage, assetManager) {
+        this._enemies = [];
+        this.stage = stage;
+        this.assetManager = assetManager;
+    }
+    get enemies() { return this._enemies; }
+    set enemies(value) { this._enemies = value; }
+    Create(platformM) {
+        let created = true;
+        if (platformM.platforms[platformM.platforms.length - 1].sprite.y <= -5) {
+            this.decideSpawned = Toolkit_1.randomMe(0, 100);
+            if (this.decideSpawned == 1) {
+                this.enemyMaker = new Spike_1.default(this.stage, this.assetManager);
+                this.enemyMaker.positionMe(Toolkit_1.randomMe(platformM.platforms[platformM.platforms.length - 1].sprite.x - (platformM.platforms[platformM.platforms.length - 1].sprite.getBounds().width / 3), (platformM.platforms[platformM.platforms.length - 1].sprite.x + (platformM.platforms[platformM.platforms.length - 1].sprite.getBounds().width / 3))), platformM.platforms[platformM.platforms.length - 1].sprite.y);
+            }
+            else {
+                created = false;
+            }
+            if (created) {
+                this.stage.addChildAt(this.enemyMaker.sprite, 7);
+                this._enemies.push(this.enemyMaker);
+                console.log("spawn new enemy");
+            }
+        }
+    }
+    CheckToCreate(platformM) {
+        if (this._enemies[this._enemies.length - 1].sprite.y > 100) {
+            if (Toolkit_1.randomMe(1, 3) <= 3) {
+                this.Create(platformM);
+            }
+            if (this._enemies[this._enemies.length - 1].sprite.y > 550) {
+                this.Create(platformM);
+            }
+        }
+    }
+    CheckAndRemoveOnScrollOff() {
+        for (let i = 0; i < this._enemies.length; i++) {
+            if (this._enemies[i].sprite.y >= Constants_1.STAGE_HEIGHT + this._enemies[i].sprite.getBounds().height) {
+                this.stage.removeChild(this._enemies[i].sprite);
+            }
+        }
+    }
+    SetupStart() {
+        let startingEnemy = new Spike_1.default(this.stage, this.assetManager);
+        startingEnemy.positionMe(133, 360);
+        this._enemies.push(startingEnemy);
+    }
+    Update(player, platformM) {
+        this.CheckToCreate(platformM);
+        for (let i = 0; i < this._enemies.length; i++) {
+            this._enemies[i].EnemyUpdate(player);
+        }
+        this.CheckAndRemoveOnScrollOff();
+    }
+}
+exports.default = EnemyManager;
+
+
+/***/ }),
+
 /***/ "./src/Managers/ItemManager.ts":
 /*!*************************************!*\
   !*** ./src/Managers/ItemManager.ts ***!
@@ -10812,7 +10963,7 @@ class ItemManager {
     set items(value) { this._items = value; }
     Create() {
         let created = true;
-        this.decideSpawned = Toolkit_1.randomMe(1, 70);
+        this.decideSpawned = Toolkit_1.randomMe(0, 70);
         if (this.decideSpawned == 1) {
             this.itemMaker = new OneUP_1.default(this.stage, this.assetManager);
         }
@@ -10852,27 +11003,30 @@ class ItemManager {
             }
         }
     }
-    CheckAndRemoveOnPickUp() {
-        for (let i = 0; i < this._items.length; i++) {
-            if (this._items[i].beingPickedUp) {
-            }
-        }
-    }
     SetupStart() {
         let startingItem = new Jetpack_1.default(this.stage, this.assetManager);
         startingItem.positionMe(300, 200);
         this._items.push(startingItem);
+        let testingItem = new Fireball_1.default(this.stage, this.assetManager);
+        testingItem.positionMe(200, 300);
+        this._items.push(testingItem);
     }
-    Update(player, score) {
+    Update(player, score, enemyM, item) {
         this.CheckToCreate();
         for (let i = 0; i < this._items.length; i++) {
-            this._items[i].ItemUpdate(player);
+            if (this._items[i].itemType == Item_1.TYPE.FIREBALL) {
+                for (let j = 0; j < enemyM.enemies.length; j++) {
+                    this._items[i].ItemUpdate(player, enemyM.enemies[j], item);
+                }
+            }
+            else {
+                this._items[i].ItemUpdate(player, null, null);
+            }
             if (this._items[i].itemType == Item_1.TYPE.JETPACK && this._items[i].special && this._items[i].state != GameObject_1.STATE.GONE) {
                 score.Add(player.gainedPoints);
             }
         }
         this.CheckAndRemoveOnScrollOff();
-        this.CheckAndRemoveOnPickUp();
     }
 }
 exports.default = ItemManager;
@@ -10927,7 +11081,7 @@ class PlatformManager {
             if (Toolkit_1.randomMe(0, 50) <= 10) {
                 this.Create();
             }
-            if (this.platforms[this.platforms.length - 1].sprite.y > 100) {
+            if (this.platforms[this.platforms.length - 1].sprite.y > 97) {
                 this.Create();
             }
         }
@@ -10982,9 +11136,9 @@ exports.default = PlatformManager;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GUI = void 0;
+const Constants_1 = __webpack_require__(/*! ../Constants */ "./src/Constants.ts");
 const GameCharacter_1 = __webpack_require__(/*! ../Characters/GameCharacter */ "./src/Characters/GameCharacter.ts");
 const Game_1 = __webpack_require__(/*! ../Game */ "./src/Game.ts");
-const Constants_1 = __webpack_require__(/*! ../Constants */ "./src/Constants.ts");
 var GUI;
 (function (GUI) {
     GUI[GUI["LIFE"] = 0] = "LIFE";
@@ -10996,12 +11150,12 @@ class ScreenManager {
         this._GUI = new createjs.Container();
         this._MainMenu = new createjs.Container();
         stage.addChild(this._MainMenu);
-        this.spriteMenuInfo = assetManager.getSprite("assets", "Instructions/clickAnywhereToStart", Constants_1.STAGE_WIDTH / 2, (Constants_1.STAGE_HEIGHT / 4) * 3);
+        this.spriteMenuInfo = assetManager.getSprite("assets", "Display/Instructions/clickAnywhereToStart", Constants_1.STAGE_WIDTH / 2, (Constants_1.STAGE_HEIGHT / 4) * 3);
         this.spriteMenuInfo.scaleX = 2.5;
         this.spriteMenuInfo.scaleY = 2;
         this.spriteMenuInfo.play();
         this._MainMenu.addChild(this.spriteMenuInfo);
-        this.spritePlayGameInfo = assetManager.getSprite("assets", "Instructions/clickAndHoldPlayer", Constants_1.STAGE_WIDTH / 2 + 50, (Constants_1.STAGE_HEIGHT / 4) * 3 - 55);
+        this.spritePlayGameInfo = assetManager.getSprite("assets", "Display/Instructions/clickAndHoldPlayer", Constants_1.STAGE_WIDTH / 2 + 50, (Constants_1.STAGE_HEIGHT / 4) * 3 - 55);
         this.spritePlayGameInfo.scaleX = 2;
         this.spritePlayGameInfo.scaleY = 2;
         this.spritePlayGameInfo.visible = false;
@@ -11015,7 +11169,7 @@ class ScreenManager {
     get GUI() { return this._GUI; }
     get MainMenu() { return this._MainMenu; }
     get SpritePlayGameInfo() { return this.spritePlayGameInfo; }
-    CheckAndScaleStageFromPlayer(player, platformM, itemM) {
+    CheckAndScaleStageFromPlayer(player, platformM, itemM, enemyM) {
         if (player.Y <= 270 && player.direction == GameCharacter_1.DIRECTION.UP) {
             player.scrollHeight = true;
             for (let i = 0; i < platformM.platforms.length; i++) {
@@ -11024,12 +11178,15 @@ class ScreenManager {
             for (let i = 0; i < itemM.items.length; i++) {
                 itemM.items[i].sprite.y += player.speed;
             }
+            for (let i = 0; i < enemyM.enemies.length; i++) {
+                enemyM.enemies[i].sprite.y += player.speed;
+            }
         }
     }
-    Update(player, platformM, itemM, stage, gameState) {
+    Update(player, platformM, itemM, enemyM, Inventory, stage, gameState) {
         switch (gameState) {
             case Game_1.GAMESTATE.GAMEPLAY:
-                this.CheckAndScaleStageFromPlayer(player, platformM, itemM);
+                this.CheckAndScaleStageFromPlayer(player, platformM, itemM, enemyM);
                 stage.addChild(this._GUI);
                 break;
             case Game_1.GAMESTATE.RETRY:
@@ -11040,8 +11197,10 @@ class ScreenManager {
                 player.GainLife(3);
                 platformM.SetupStart();
                 itemM.SetupStart();
+                enemyM.SetupStart();
                 player.sprite.visible = true;
                 this.spritePlayGameInfo.visible = true;
+                this._GUI.addChild(Inventory.display);
                 break;
             case Game_1.GAMESTATE.MAINMENU:
                 this._GUI.getChildAt(GUI.SCORE).visible = false;
@@ -11058,8 +11217,16 @@ class ScreenManager {
                 this._GUI.getChildAt(GUI.SCORE).scaleX = 2.5;
                 this._GUI.getChildAt(GUI.SCORE).scaleY = 2.5;
                 this._GUI.getChildAt(GUI.LIFE).visible = false;
+                Inventory.RestartInventory();
+                this._GUI.removeChild(Inventory.display);
                 for (let i = 0; i < platformM.platforms.length; i++) {
                     stage.removeChild(platformM.platforms[i].sprite);
+                }
+                for (let i = 0; i < itemM.items.length; i++) {
+                    stage.removeChild(itemM.items[i].sprite);
+                }
+                for (let i = 0; i < enemyM.enemies.length; i++) {
+                    stage.removeChild(enemyM.enemies[i].sprite);
                 }
                 this.spriteFinalScore.visible = true;
                 player.sprite.gotoAndPlay("Astronaught/idle-Color");
@@ -11198,7 +11365,7 @@ class Item extends GameObject_1.default {
         console.log(", this is the Item default message");
         this._state = GameObject_1.STATE.GONE;
     }
-    ItemUpdate(player) {
+    ItemUpdate(player, enemy, inventory) {
         super.Update();
         if (this._itemForm == FORM.PICKUP) {
             this.DetectPickup(player);
@@ -11222,6 +11389,7 @@ exports.default = Item;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Item_1 = __webpack_require__(/*! ../Item */ "./src/Objects/Item.ts");
 const GameObject_1 = __webpack_require__(/*! ../GameObject */ "./src/Objects/GameObject.ts");
+const Toolkit_1 = __webpack_require__(/*! ../../Toolkit */ "./src/Toolkit.ts");
 class Fireball extends Item_1.default {
     constructor(stage, assetManager) {
         super(stage, assetManager);
@@ -11233,22 +11401,26 @@ class Fireball extends Item_1.default {
         this.scaleMe(2);
         stage.addChild(this._sprite);
     }
+    Attack(enemy, inventory) {
+        if (Toolkit_1.pointHit(inventory.activeItem.sprite, enemy.sprite)) {
+            enemy.killMe();
+        }
+    }
     UseItem(player) {
         if (this._readyToFire && this._ammo > 0) {
             console.log("fireball shot");
+            this._ammo--;
             this._readyToFire = false;
             this.positionMe(player.sprite.x, player.sprite.y - 50);
-            this._ammo--;
             console.log(this._ammo);
         }
     }
-    ItemUpdate(player) {
-        super.ItemUpdate(player);
+    ItemUpdate(player, enemy, inventory) {
+        super.ItemUpdate(player, null, null);
         if (this._sprite.y < -this._sprite.getBounds().height) {
             this.idleMe();
             this._readyToFire = true;
             console.log("ready to fire");
-            this._sprite.y = 700;
             if (this._ammo == 0) {
                 this._state = GameObject_1.STATE.GONE;
             }
@@ -11257,12 +11429,14 @@ class Fireball extends Item_1.default {
             this.idleMe();
             this.startMe();
         }
-        else if (this._itemForm == Item_1.FORM.INUSE) {
+        else if (this._itemForm == Item_1.FORM.INUSE && this._state != GameObject_1.STATE.GONE) {
             if (!this._readyToFire) {
+                this.Attack(enemy, inventory);
                 this._sprite.y -= this._bulletSpeed;
             }
             else {
                 this.positionMe(player.X, player.Y - 50);
+                this._bulletSpeed = 10;
             }
         }
     }
@@ -11290,7 +11464,7 @@ class ForceField extends Item_1.default {
         this._itemType = Item_1.TYPE.FORCEFIELD;
         this._started = false;
         this._duration = 500;
-        this._sprite = assetManager.getSprite("assets", "AstroHopShieldPlaceHolder", 0, 0);
+        this._sprite = assetManager.getSprite("assets", "Items/AstroHopShieldPlaceHolder", 0, 0);
         this._sprite.play();
         this.scaleMe(2);
         stage.addChildAt(this._sprite, 2);
@@ -11301,14 +11475,16 @@ class ForceField extends Item_1.default {
             this._started = true;
             player.iFrames = true;
             this._state = GameObject_1.STATE.ACTIVE;
-            createjs.Tween.get(this._sprite).to({ alpha: .3 }, this._duration).call(() => {
+            createjs.Tween.get(this._sprite).to({ alpha: .7 }, this._duration).call(() => {
                 createjs.Tween.get(this._sprite).to({ alpha: 1 }, this._duration).call(() => {
-                    createjs.Tween.get(this._sprite).to({ alpha: .3 }, this._duration).call(() => {
+                    createjs.Tween.get(this._sprite).to({ alpha: .5 }, this._duration).call(() => {
                         createjs.Tween.get(this._sprite).to({ alpha: 1 }, this._duration).call(() => {
                             createjs.Tween.get(this._sprite).to({ alpha: .3 }, this._duration).call(() => {
                                 createjs.Tween.get(this._sprite).to({ alpha: 1 }, this._duration).call(() => {
-                                    player.iFrames = false;
-                                    this._state = GameObject_1.STATE.GONE;
+                                    createjs.Tween.get(this._sprite).to({ alpha: 0 }, this._duration).call(() => {
+                                        player.iFrames = false;
+                                        this._state = GameObject_1.STATE.GONE;
+                                    });
                                 });
                             });
                         });
@@ -11318,7 +11494,7 @@ class ForceField extends Item_1.default {
         }
     }
     ItemUpdate(player) {
-        super.ItemUpdate(player);
+        super.ItemUpdate(player, null, null);
         if (this._itemForm == Item_1.FORM.PICKUP) {
             this.scaleMe(1.5);
         }
@@ -11354,19 +11530,24 @@ const Item_1 = __webpack_require__(/*! ../Item */ "./src/Objects/Item.ts");
 class Jetpack extends Item_1.default {
     constructor(stage, assetManager) {
         super(stage, assetManager);
+        this._itemForm = Item_1.FORM.PICKUP;
         this._itemType = Item_1.TYPE.JETPACK;
         this._power = Constants_1.ITEM_JETPACK_POWER;
         this._weight = Constants_1.ITEM_JETPACK_WEIGHT;
         this.launched = false;
-        this._sprite = assetManager.getSprite("assets", "fireball/attack", 0, 0);
-        this.scaleMe(5);
-        stage.addChild(this._sprite);
+        this.fire = false;
+        this._sprite = assetManager.getSprite("assets", "Items/JetPack", 0, 0);
+        this.startMe();
+        this.scaleMe(2.5);
+        stage.addChildAt(this._sprite, 3);
     }
     get special() { return this.launched; }
     UseItem(player) {
         if (!this.launched) {
             this.launched = true;
             player.Jumping = true;
+            player.iFrames = true;
+            player.activeItem = Item_1.TYPE.JETPACK;
             player.power = this._power;
             player.weight = this._weight;
             player.direction = GameCharacter_1.DIRECTION.UP;
@@ -11374,13 +11555,23 @@ class Jetpack extends Item_1.default {
         }
     }
     ItemUpdate(player) {
-        super.ItemUpdate(player);
-        if (this._itemForm == Item_1.FORM.INUSE) {
-            this.positionMe(player.X, player.Y + 50);
+        super.ItemUpdate(player, null, null);
+        if (this._itemForm == Item_1.FORM.SPRITE) {
+            this._sprite.gotoAndStop("Items/JetPack");
+        }
+        else if (this._itemForm == Item_1.FORM.INUSE) {
+            if (!this.fire) {
+                this._sprite.gotoAndPlay("fireball/attack");
+                this.scaleMe(5);
+                this.fire = true;
+            }
+            this.positionMe(player.X, player.Y + 53);
             player.gainedPoints = 1;
             if (player.direction == GameCharacter_1.DIRECTION.DOWN) {
                 this.state = GameObject_1.STATE.GONE;
                 player.gainedPoints = 0;
+                player.activeItem = Item_1.TYPE.NULL;
+                player.iFrames = false;
             }
         }
     }
@@ -11407,7 +11598,7 @@ class OneUP extends Item_1.default {
         super(stage, assetManager);
         this._itemType = Item_1.TYPE.ONEUP;
         this._lifeUp = 1;
-        this._sprite = assetManager.getSprite("assets", "Astronaught/idle-nocolor", 0, 0);
+        this._sprite = assetManager.getSprite("assets", "Items/OneUp", 0, 0);
         stage.addChild(this._sprite);
     }
     LifeDetectPickup(player) {
@@ -11650,10 +11841,18 @@ class InventorySystem {
         this._activeItemHold = null;
         this.stage = stage;
         this.assetManager = assetManager;
-        this.inventoryItemInUse = assetManager.getSprite("assets", "Astronaught/Run/sideRunning", 0, 0);
+        this._display = new createjs.Container();
+        gui.addChild(this._display);
+        this.inventorySquare = assetManager.getSprite("assets", "Display/InventoryBox", 5, 5);
+        this.inventorySquare.scaleX = 1.8;
+        this.inventorySquare.scaleY = 1.8;
+        this._display.addChildAt(this.inventorySquare, 0);
+        this.inventoryItemInUse = assetManager.getSprite("assets", "Display/InventoryBox", 0, 0);
     }
     get activeItem() { return this._activeItemHold; }
     get savedItem() { return this._savedItemHold; }
+    get display() { return this._display; }
+    get itemInUse() { return this.inventoryItemInUse; }
     UseActiveItem(player) {
         console.log("using activeItem");
         this.inventoryItemInUse.play();
@@ -11673,7 +11872,7 @@ class InventorySystem {
         }
     }
     RemoveActiveItem() {
-        this.stage.removeChild(this._activeItemHold.sprite);
+        this._display.removeChild(this._activeItemHold.sprite);
         this._activeItemHold = null;
     }
     SetInUseSprite() {
@@ -11694,22 +11893,30 @@ class InventorySystem {
             this._savedItemHold = item;
             this._savedItemHold.state = GameObject_1.STATE.IDLE;
             this._savedItemHold.itemForm = Item_1.FORM.SPRITE;
-            this.stage.addChildAt(this._savedItemHold.sprite, 7);
+            this._display.addChildAt(this._savedItemHold.sprite, 1);
         }
         else if (this._activeItemHold == null) {
             this._activeItemHold = item;
             this._activeItemHold.state = GameObject_1.STATE.IDLE;
             this._activeItemHold.itemForm = Item_1.FORM.SPRITE;
             this.SetInUseSprite();
-            this.stage.addChildAt(this._activeItemHold.sprite, 7);
+            this._display.addChildAt(this._activeItemHold.sprite, 2);
         }
         else {
             item.state = GameObject_1.STATE.GONE;
         }
     }
+    RestartInventory() {
+        this._savedItemDisplayOnce = null;
+        if (this._savedItemHold.sprite.isVisible() == true) {
+            this._savedItemHold.sprite.visible = false;
+        }
+        this._savedItemHold = null;
+        this._activeItemHold = null;
+        console.log("nulling inventory");
+    }
     Update(player) {
         if (this._activeItemHold != null) {
-            this._activeItemHold.ItemUpdate(player);
             if (this._activeItemHold.state == GameObject_1.STATE.IDLE) {
                 this._activeItemHold.itemForm = Item_1.FORM.SPRITE;
                 this._activeItemHold.positionMe(player.X, player.Y - 50);
@@ -11724,8 +11931,8 @@ class InventorySystem {
             this.inventoryItemInUse.x = -200;
         }
         if (this._savedItemHold != null) {
-            this._savedItemHold.sprite.x = 35;
-            this._savedItemHold.sprite.y = 35;
+            this._savedItemHold.sprite.x = 34;
+            this._savedItemHold.sprite.y = 34;
         }
     }
 }

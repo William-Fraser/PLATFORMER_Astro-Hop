@@ -181,88 +181,6 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/Shields/ForceFields/AstroHopShieldPlaceHolder.png</key>
-            <key type="filename">Astronaught/Back-Jetpack.png</key>
-            <key type="filename">Astronaught/Rocketman.png</key>
-            <key type="filename">Astronaught/falling_1.png</key>
-            <key type="filename">Astronaught/falling_10.png</key>
-            <key type="filename">Astronaught/falling_11.png</key>
-            <key type="filename">Astronaught/falling_12.png</key>
-            <key type="filename">Astronaught/falling_2.png</key>
-            <key type="filename">Astronaught/falling_3.png</key>
-            <key type="filename">Astronaught/falling_4.png</key>
-            <key type="filename">Astronaught/falling_5.png</key>
-            <key type="filename">Astronaught/falling_6.png</key>
-            <key type="filename">Astronaught/falling_7.png</key>
-            <key type="filename">Astronaught/falling_8.png</key>
-            <key type="filename">Astronaught/falling_9.png</key>
-            <key type="filename">Astronaught/idle-Back.png</key>
-            <key type="filename">Astronaught/idle-Color.png</key>
-            <key type="filename">Astronaught/idle-nocolor.png</key>
-            <key type="filename">Astronaught/side-Jetpack.png</key>
-            <key type="filename">Astronaught/sideRunning_1.png</key>
-            <key type="filename">Astronaught/sideRunning_10.png</key>
-            <key type="filename">Astronaught/sideRunning_11.png</key>
-            <key type="filename">Astronaught/sideRunning_12.png</key>
-            <key type="filename">Astronaught/sideRunning_13.png</key>
-            <key type="filename">Astronaught/sideRunning_14.png</key>
-            <key type="filename">Astronaught/sideRunning_15.png</key>
-            <key type="filename">Astronaught/sideRunning_16.png</key>
-            <key type="filename">Astronaught/sideRunning_17.png</key>
-            <key type="filename">Astronaught/sideRunning_18.png</key>
-            <key type="filename">Astronaught/sideRunning_19.png</key>
-            <key type="filename">Astronaught/sideRunning_2.png</key>
-            <key type="filename">Astronaught/sideRunning_20.png</key>
-            <key type="filename">Astronaught/sideRunning_21.png</key>
-            <key type="filename">Astronaught/sideRunning_22.png</key>
-            <key type="filename">Astronaught/sideRunning_23.png</key>
-            <key type="filename">Astronaught/sideRunning_24.png</key>
-            <key type="filename">Astronaught/sideRunning_3.png</key>
-            <key type="filename">Astronaught/sideRunning_4.png</key>
-            <key type="filename">Astronaught/sideRunning_5.png</key>
-            <key type="filename">Astronaught/sideRunning_6.png</key>
-            <key type="filename">Astronaught/sideRunning_7.png</key>
-            <key type="filename">Astronaught/sideRunning_8.png</key>
-            <key type="filename">Astronaught/sideRunning_9.png</key>
-            <key type="filename">Display/InventoryBox.png</key>
-            <key type="filename">Enemies/EyeballWalk/EyeWalk_Left_3.png</key>
-            <key type="filename">Enemies/EyeballWalk/EyeWalk_Right_1.png</key>
-            <key type="filename">Enemies/EyeballWalk/EyeWalk_Right_2.png</key>
-            <key type="filename">Enemies/EyeballWalk/EyeWalk_Right_3.png</key>
-            <key type="filename">Enemies/EyeballWalk/Turnaround-Left.png</key>
-            <key type="filename">Enemies/EyeballWalk/Turnaround-Right.png</key>
-            <key type="filename">Enemies/EyeballWalk/WalkLeft_1.png</key>
-            <key type="filename">Enemies/EyeballWalk/Walk_2.png</key>
-            <key type="filename">Enemies/Slime/Idle-3.png</key>
-            <key type="filename">Enemies/Slime/Idle_1.png</key>
-            <key type="filename">Enemies/Slime/Idle_2.png</key>
-            <key type="filename">Enemies/Slime/Squish-2.png</key>
-            <key type="filename">Enemies/Slime/Squish_1.png</key>
-            <key type="filename">Enemies/Slime/Squish_3.png</key>
-            <key type="filename">Enemies/Slime/Squish_4.png</key>
-            <key type="filename">Enemies/Spike/Idle_1.png</key>
-            <key type="filename">Enemies/Spike/Idle_2.png</key>
-            <key type="filename">Enemies/Spike/Idle_3.png</key>
-            <key type="filename">Platforms/Astroid.png</key>
-            <key type="filename">Platforms/Astroid2.png</key>
-            <key type="filename">Platforms/Branches/BranchPlatform.png</key>
-            <key type="filename">Platforms/Dirt.png</key>
-            <key type="filename">Platforms/rocket pad.png</key>
-            <key type="filename">Platforms/rocketpad2.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>8,8,16,16</rect>
-                <key>scale9Paddings</key>
-                <rect>8,8,16,16</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_1.png</key>
             <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_10.png</key>
             <key type="filename">../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball/attack_11.png</key>
@@ -367,13 +285,6 @@
             <key type="filename">Display/Instructions/clickAnywhereToStart_7.png</key>
             <key type="filename">Display/Instructions/clickAnywhereToStart_8.png</key>
             <key type="filename">Display/Instructions/clickAnywhereToStart_9.png</key>
-            <key type="filename">Platforms/Comet/CometLarge.png</key>
-            <key type="filename">Platforms/Comet/Comet_.gif</key>
-            <key type="filename">Platforms/Comet/Comet_1.png</key>
-            <key type="filename">Platforms/Comet/Comet_2.png</key>
-            <key type="filename">Platforms/Comet/Comet_3.png</key>
-            <key type="filename">Platforms/Comet/Comet_4.png</key>
-            <key type="filename">Platforms/Comet/Comet_5.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -388,10 +299,114 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Display/Space Background.png</key>
+            <key type="filename">Astronaught/Back-Jetpack.png</key>
+            <key type="filename">Astronaught/Falling-Blaster_3.png</key>
+            <key type="filename">Astronaught/Falling-Blaster_4.png</key>
+            <key type="filename">Astronaught/Falling-MoonShoes_1.png</key>
+            <key type="filename">Astronaught/Falling-MoonShoes_2.png</key>
+            <key type="filename">Astronaught/Falling-MoonShoes_3.png</key>
+            <key type="filename">Astronaught/Falling-MoonShoes_4.png</key>
+            <key type="filename">Astronaught/Jump-MoonShoes_1.png</key>
+            <key type="filename">Astronaught/Jump-MoonShoes_2.png</key>
+            <key type="filename">Astronaught/Jump-MoonShoes_3.png</key>
+            <key type="filename">Astronaught/Jump_1.png</key>
+            <key type="filename">Astronaught/Jump_2.png</key>
+            <key type="filename">Astronaught/Jump_3.png</key>
+            <key type="filename">Astronaught/Jump_4.png</key>
+            <key type="filename">Astronaught/Jump_5.png</key>
+            <key type="filename">Astronaught/Jump_6.png</key>
+            <key type="filename">Astronaught/Jump_7.png</key>
+            <key type="filename">Astronaught/Jump_8.png</key>
+            <key type="filename">Astronaught/Jump_9.png</key>
+            <key type="filename">Astronaught/Rocketman.png</key>
+            <key type="filename">Astronaught/falling-Blaster_1.png</key>
+            <key type="filename">Astronaught/falling-Blaster_2.png</key>
+            <key type="filename">Astronaught/falling_1.png</key>
+            <key type="filename">Astronaught/falling_10.png</key>
+            <key type="filename">Astronaught/falling_11.png</key>
+            <key type="filename">Astronaught/falling_12.png</key>
+            <key type="filename">Astronaught/falling_2.png</key>
+            <key type="filename">Astronaught/falling_3.png</key>
+            <key type="filename">Astronaught/falling_4.png</key>
+            <key type="filename">Astronaught/falling_5.png</key>
+            <key type="filename">Astronaught/falling_6.png</key>
+            <key type="filename">Astronaught/falling_7.png</key>
+            <key type="filename">Astronaught/falling_8.png</key>
+            <key type="filename">Astronaught/falling_9.png</key>
+            <key type="filename">Astronaught/idle-Color.png</key>
+            <key type="filename">Astronaught/sideRunning_1.png</key>
+            <key type="filename">Astronaught/sideRunning_10.png</key>
+            <key type="filename">Astronaught/sideRunning_11.png</key>
+            <key type="filename">Astronaught/sideRunning_12.png</key>
+            <key type="filename">Astronaught/sideRunning_13.png</key>
+            <key type="filename">Astronaught/sideRunning_14.png</key>
+            <key type="filename">Astronaught/sideRunning_15.png</key>
+            <key type="filename">Astronaught/sideRunning_16.png</key>
+            <key type="filename">Astronaught/sideRunning_17.png</key>
+            <key type="filename">Astronaught/sideRunning_18.png</key>
+            <key type="filename">Astronaught/sideRunning_19.png</key>
+            <key type="filename">Astronaught/sideRunning_2.png</key>
+            <key type="filename">Astronaught/sideRunning_20.png</key>
+            <key type="filename">Astronaught/sideRunning_21.png</key>
+            <key type="filename">Astronaught/sideRunning_22.png</key>
+            <key type="filename">Astronaught/sideRunning_23.png</key>
+            <key type="filename">Astronaught/sideRunning_24.png</key>
+            <key type="filename">Astronaught/sideRunning_3.png</key>
+            <key type="filename">Astronaught/sideRunning_4.png</key>
+            <key type="filename">Astronaught/sideRunning_5.png</key>
+            <key type="filename">Astronaught/sideRunning_6.png</key>
+            <key type="filename">Astronaught/sideRunning_7.png</key>
+            <key type="filename">Astronaught/sideRunning_8.png</key>
+            <key type="filename">Astronaught/sideRunning_9.png</key>
+            <key type="filename">Items/AstroHopShieldPlaceHolder.png</key>
+            <key type="filename">Items/JetPack_1.png</key>
+            <key type="filename">Items/JetPack_10.png</key>
+            <key type="filename">Items/JetPack_11.png</key>
+            <key type="filename">Items/JetPack_12.png</key>
+            <key type="filename">Items/JetPack_2.png</key>
+            <key type="filename">Items/JetPack_3.png</key>
+            <key type="filename">Items/JetPack_4.png</key>
+            <key type="filename">Items/JetPack_5.png</key>
+            <key type="filename">Items/JetPack_6.png</key>
+            <key type="filename">Items/JetPack_7.png</key>
+            <key type="filename">Items/JetPack_8.png</key>
+            <key type="filename">Items/JetPack_9.png</key>
+            <key type="filename">Items/OneUp.png</key>
+            <key type="filename">Platforms/Branches/BranchPlatform.png</key>
+            <key type="filename">Platforms/Dirt.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Display/InventoryBox.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0,0</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Display/Space Background.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -418,18 +433,130 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Display/glyphs.png</key>
+            <key type="filename">Enemies/EyeballWalk/Left-TurnAround.png</key>
+            <key type="filename">Enemies/EyeballWalk/Left_1.png</key>
+            <key type="filename">Enemies/EyeballWalk/Left_2.png</key>
+            <key type="filename">Enemies/EyeballWalk/Left_3.png</key>
+            <key type="filename">Enemies/EyeballWalk/Right-TurnAround.png</key>
+            <key type="filename">Enemies/EyeballWalk/Right_1.png</key>
+            <key type="filename">Enemies/EyeballWalk/Right_2.png</key>
+            <key type="filename">Enemies/EyeballWalk/Right_3.png</key>
+            <key type="filename">Enemies/Slime/Idle-3.png</key>
+            <key type="filename">Enemies/Slime/Idle_1.png</key>
+            <key type="filename">Enemies/Slime/Idle_2.png</key>
+            <key type="filename">Enemies/Slime/Squish-2.png</key>
+            <key type="filename">Enemies/Slime/Squish_1.png</key>
+            <key type="filename">Enemies/Slime/Squish_3.png</key>
+            <key type="filename">Enemies/Slime/Squish_4.png</key>
+            <key type="filename">Enemies/Spike/Idle_1.png</key>
+            <key type="filename">Enemies/Spike/Idle_2.png</key>
+            <key type="filename">Enemies/Spike/Idle_3.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0.5,1</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>58,6,117,13</rect>
+                <rect>8,8,16,16</rect>
                 <key>scale9Paddings</key>
-                <rect>58,6,117,13</rect>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Platforms/Astroid.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.3125</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Platforms/Astroid2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.28125</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Platforms/Comet/CometLarge.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.4375</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9Paddings</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Platforms/Comet/Comet_.gif</key>
+            <key type="filename">Platforms/Comet/Comet_2.png</key>
+            <key type="filename">Platforms/Comet/Comet_3.png</key>
+            <key type="filename">Platforms/Comet/Comet_4.png</key>
+            <key type="filename">Platforms/Comet/Comet_5.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.25,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9Paddings</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Platforms/Comet/Comet_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.25,0.53125</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9Paddings</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Platforms/rocket pad.png</key>
+            <key type="filename">Platforms/rocketpad2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.40625</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -442,7 +569,6 @@
             <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/fireball</filename>
             <filename>Platforms</filename>
             <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Text/your Final Score was....png</filename>
-            <filename>../../../../../../../Documents/School/Y1 S2/Game Programming/CreateJS and Sprite Design/Attacksprites/Shields/ForceFields/AstroHopShieldPlaceHolder.png</filename>
             <filename>Display</filename>
             <filename>Enemies</filename>
             <filename>Items</filename>

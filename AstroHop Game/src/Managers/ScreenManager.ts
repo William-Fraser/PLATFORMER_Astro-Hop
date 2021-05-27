@@ -1,11 +1,12 @@
+import { STAGE_HEIGHT, STAGE_WIDTH } from "../Constants";
 import { DIRECTION } from "../Characters/GameCharacter";
 import { GAMESTATE } from "../Game";
 import Player from "../Characters/Player";
 import PlatformManager from "./PlatformManager";
-import { STAGE_HEIGHT, STAGE_WIDTH } from "../Constants";
 import AssetManager from "./AssetManager";
 import ItemManager from "./ItemManager";
-import { FORM, TYPE } from "../Objects/Item";
+import InventorySystem from "../Systems/InventorySystem";
+import EnemyManager from "./EnemyManager";
 
 export enum GUI {
     LIFE,
@@ -32,13 +33,13 @@ export default class ScreenManager {
         stage.addChild(this._MainMenu);
     
         //inst private fields
-        this.spriteMenuInfo = assetManager.getSprite("assets", "Instructions/clickAnywhereToStart", STAGE_WIDTH/2, (STAGE_HEIGHT/4)*3);
+        this.spriteMenuInfo = assetManager.getSprite("assets", "Display/Instructions/clickAnywhereToStart", STAGE_WIDTH/2, (STAGE_HEIGHT/4)*3);
         this.spriteMenuInfo.scaleX = 2.5;
         this.spriteMenuInfo.scaleY = 2;
         this.spriteMenuInfo.play();
         this._MainMenu.addChild(this.spriteMenuInfo);
 
-        this.spritePlayGameInfo = assetManager.getSprite("assets", "Instructions/clickAndHoldPlayer", STAGE_WIDTH/2+50, (STAGE_HEIGHT/4)*3-55);
+        this.spritePlayGameInfo = assetManager.getSprite("assets", "Display/Instructions/clickAndHoldPlayer", STAGE_WIDTH/2+50, (STAGE_HEIGHT/4)*3-55);
         this.spritePlayGameInfo.scaleX = 2;
         this.spritePlayGameInfo.scaleY = 2;
         this.spritePlayGameInfo.visible = false;
@@ -57,7 +58,7 @@ export default class ScreenManager {
     get SpritePlayGameInfo():createjs.Sprite { return this.spritePlayGameInfo; }
 
     // ----- private Methods
-    private CheckAndScaleStageFromPlayer(player:Player, platformM:PlatformManager, itemM:ItemManager) {
+    private CheckAndScaleStageFromPlayer(player:Player, platformM:PlatformManager, itemM:ItemManager, enemyM:EnemyManager) {
         
         if (player.Y <= 270 && player.direction == DIRECTION.UP) {
             player.scrollHeight = true;
@@ -71,18 +72,23 @@ export default class ScreenManager {
             for (let i = 0; i < itemM.items.length; i++) {
                 itemM.items[i].sprite.y += player.speed;
             }
+
+            //scroll enemies
+            for (let i = 0; i < enemyM.enemies.length; i++) {
+                enemyM.enemies[i].sprite.y += player.speed;
+            }
         }
     }
 
     // ----- public methods
 
-    public Update(player:Player, platformM:PlatformManager, itemM:ItemManager, stage:createjs.StageGL, gameState:GAMESTATE):GAMESTATE {
+    public Update(player:Player, platformM:PlatformManager, itemM:ItemManager, enemyM:EnemyManager, Inventory:InventorySystem, stage:createjs.StageGL, gameState:GAMESTATE):GAMESTATE {
         
         // this gameState switch controls visual/screen elements
         switch(gameState) {
             
             case GAMESTATE.GAMEPLAY:
-                this.CheckAndScaleStageFromPlayer(player, platformM, itemM);
+                this.CheckAndScaleStageFromPlayer(player, platformM, itemM, enemyM);
                 stage.addChild(this._GUI);
                 break;
 
@@ -96,8 +102,10 @@ export default class ScreenManager {
                 player.GainLife(3);
                 platformM.SetupStart();
                 itemM.SetupStart();
+                enemyM.SetupStart();
                 player.sprite.visible = true;
                 this.spritePlayGameInfo.visible = true;
+                this._GUI.addChild(Inventory.display);
                 break;
                     
             case GAMESTATE.MAINMENU:
@@ -116,10 +124,25 @@ export default class ScreenManager {
                 this._GUI.getChildAt(GUI.SCORE).scaleX = 2.5;
                 this._GUI.getChildAt(GUI.SCORE).scaleY = 2.5;
                 this._GUI.getChildAt(GUI.LIFE).visible = false;
+                
+                //remove inventory display
+                Inventory.RestartInventory();
+                this._GUI.removeChild(Inventory.display);
                 //this._GUI.getChildAt(GUI.INVENTORY).visible = false;
                 
+                //remove platforms
                 for (let i = 0; i < platformM.platforms.length; i++) {
                     stage.removeChild(platformM.platforms[i].sprite);
+                }
+
+                //remove pick up items
+                for (let i = 0; i < itemM.items.length; i++) {
+                    stage.removeChild(itemM.items[i].sprite);
+                }
+
+                //remove enemies
+                for (let i = 0; i < enemyM.enemies.length; i++) {
+                    stage.removeChild(enemyM.enemies[i].sprite);
                 }
                 
                 this.spriteFinalScore.visible = true;
