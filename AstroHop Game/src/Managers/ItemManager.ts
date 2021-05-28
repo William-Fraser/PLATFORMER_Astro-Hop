@@ -1,11 +1,12 @@
 import Enemy from "../Characters/Enemy";
 import Player from "../Characters/Player";
-import { STAGE_HEIGHT } from "../Constants";
+import { STAGE_HEIGHT, STAGE_WIDTH } from "../Constants";
 import { STATE } from "../Objects/GameObject";
 import Item, { TYPE } from "../Objects/Item";
 import Fireball from "../Objects/Items/Fireball";
 import ForceField from "../Objects/Items/ForceField";
 import Jetpack from "../Objects/Items/Jetpack";
+import MoonShoes from "../Objects/Items/MoonShoes";
 import OneUP from "../Objects/Items/OneUP";
 import InventorySystem from "../Systems/InventorySystem";
 import ScoreSystem from "../Systems/ScoreSystem";
@@ -60,7 +61,7 @@ export default class ItemManager {
             this.itemMaker.positionMe(
                 randomMe(
                     this.itemMaker.sprite.getBounds().width/2+100, 
-                    (STAGE_HEIGHT-(this.itemMaker.sprite.getBounds().width/2))-100), 
+                    (STAGE_WIDTH-(this.itemMaker.sprite.getBounds().width/2))-100), 
                 -this.itemMaker.sprite.getBounds().height);
             this.stage.addChildAt(this.itemMaker.sprite, 7);
             this._items.push(this.itemMaker);
@@ -70,7 +71,7 @@ export default class ItemManager {
     //#region Screenmanager checks
     private CheckToCreate() { 
         if (this._items[this._items.length-1].sprite.y > 30) { // -1 because it starts from 0 but length doesnt include a count for it
-            if (randomMe(0, 40) <= 2) { // randomly spawns an item
+            if (randomMe(0, 100) <= 2) { // randomly spawns an item
                 this.Create();
             }
             if (this._items[this._items.length-1].sprite.y > 500) {
@@ -90,13 +91,13 @@ export default class ItemManager {
     // ----- public fields
     public SetupStart() {
         
-        let startingItem = new Jetpack(this.stage, this.assetManager);
+        let startingItem = new MoonShoes(this.stage, this.assetManager);
         startingItem.positionMe(300, 200);
         this._items.push(startingItem);
 
-        let testingItem = new Fireball(this.stage, this.assetManager);
-        testingItem.positionMe(200, 300);
-        this._items.push(testingItem);
+        // let testingItem = new Fireball(this.stage, this.assetManager);
+        // testingItem.positionMe(200, 300);
+        // this._items.push(testingItem);
     }
 
     public Update(player:Player, score:ScoreSystem, enemyM:EnemyManager, item:InventorySystem) {

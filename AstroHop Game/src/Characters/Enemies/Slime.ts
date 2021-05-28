@@ -2,6 +2,7 @@ import AssetManager from "../../Managers/AssetManager";
 import { STATE } from "../../Objects/GameObject";
 import { boxHit, pointHit } from "../../Toolkit";
 import Enemy from "../Enemy";
+import { DIRECTION } from "../GameCharacter";
 import Player from "../Player";
 
 export default class Slime extends Enemy {
@@ -13,6 +14,7 @@ export default class Slime extends Enemy {
         this._sprite = assetManager.getSprite("assets", "Enemies/Slime/Idle");
         this._sprite.play();
         this.scaleMe(1.2);
+        stage.addChild(this._sprite);
     }
 
     // ----- private methods
@@ -31,8 +33,16 @@ export default class Slime extends Enemy {
         this._state = STATE.DYING;
     }       
     private KillFromAbove(player:Player) {
-        if (pointHit(this.sprite, player.sprite, 0, this.sprite.getBounds().height, this.stage)) {
-            this.killMe();
+        if (player.direction == DIRECTION.DOWN) {
+            if (pointHit(this.sprite, player.sprite, 0, -this.sprite.getBounds().height)) {
+                this.killMe();
+            }
         }
+    }
+
+    // ----- public methods
+    EnemyUpdate(player:Player) {
+        super.EnemyUpdate(player);
+        this.KillFromAbove(player);
     }
 }

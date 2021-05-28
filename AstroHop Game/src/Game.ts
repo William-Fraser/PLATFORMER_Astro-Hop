@@ -25,6 +25,7 @@ export enum GAMESTATE {
     GAMEPLAY, // game
     RETRY, // can continue current game with lives
     NEWGAME, // game setup
+    PAUSED,
     MAINMENU, // initiates new game
     GAMEOVER // no more lives remaining return to mainmenu or start anew?
 }
@@ -78,8 +79,8 @@ function onReady(e:createjs.Event):void {
     this.stage.on("onPickup", onPickup);
     this.stage.on("onUseItem", onUseItem);
     
-    //key event listener
-    document.onkeyup = SpacebarPressed;
+    //key event listeners
+    document.onkeyup = KeyPressed;
     //#endregion 
     
     // startup the ticker
@@ -112,11 +113,15 @@ function onUseItem(e:createjs.Event) {
     inventory.CheckToUseActiveItem(spaceMan);
 }
 
-//keyboardevents
-function SpacebarPressed(e:KeyboardEvent) {
+//keyboardevent
+function KeyPressed(e:KeyboardEvent) {
     if (e.key == " ") {
         console.log("Spacebar Pressed ");
         spaceMan.spacebarIsPressed = true;
+    }
+    else if (e.key == "P" || e.key == "p") {
+        console.log("P Key Pressed");
+        gameState = GAMESTATE.PAUSED;
     }
 }
 //#endregion
@@ -144,11 +149,14 @@ function onTick(e:createjs.Event):void {
             //Handle starting the game and purposefully losing a life
             spaceMan.sprite.on("mousedown", (e:createjs.Event) => { 
                 screenM.SpritePlayGameInfo.visible = false;
+                screenM.SpritePauseGameInfo.visible = false;
                 spaceMan.state = STATE.ACTIVE;
                 e.remove();
             });
             spaceMan.sprite.on("pressup", (e:createjs.Event) => { 
-                spaceMan.LoseLifeRetry(1);
+                if (spaceMan.state != STATE.IDLE) {
+                    spaceMan.LoseLifeRetry(1);
+                }
                 e.remove();
             });
 
@@ -175,6 +183,19 @@ function onTick(e:createjs.Event):void {
                 // or check if ready to spawn and do this
                 spaceMan.state = STATE.ACTIVE;    
                 spaceMan.direction = DIRECTION.DOWN;
+                gameState = GAMESTATE.GAMEPLAY;
+                e.remove();
+                
+            });
+            break;
+
+        case GAMESTATE.PAUSED:
+            spaceMan.state = STATE.IDLE;
+            spaceMan.sprite.on("mousedown", (e:createjs.Event) => {
+            
+                //move to end of player tween
+                // or check if ready to spawn and do this
+                spaceMan.state = STATE.ACTIVE;    
                 gameState = GAMESTATE.GAMEPLAY;
                 e.remove();
                 

@@ -11,6 +11,8 @@ export enum TYPE {
     ONEUP,
     JETPACK,
     FORCEFIELD,
+    MOONSHOES,
+    BLASTER,
     FIREBALL
 }
 export enum FORM {

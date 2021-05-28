@@ -24,6 +24,7 @@ export default class Enemy extends GameCharacter {
     }
 
     // ----- public methods
+    public Special() {} // overloaded
 
     public EnemyUpdate(player:Player) {
         switch(this._state) {

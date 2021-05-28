@@ -8,3 +8,15 @@ Controls
 	press space to use items
 		use saved item : takes item from saved space (top left) and makes it active
 		use active item : uses the item currently active on the player until it cannot be used, some items are passive and can only be used from it's save state
+
+	
+    Special Enemy slime can be killed other than with a fireball, jumping on this squishy fellow squashes him into space juice
+
+	Items include:
+		OneUp: Heal
+		FireBall: Attack Enemies
+		Orange Shield: Protection
+		JetPack: Escape danger
+
+
+End game is to get the highest score, it's replayable until you're bored of it

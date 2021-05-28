@@ -17,29 +17,45 @@ export enum GUI {
 export default class ScreenManager {
 
     //init private fields
+    private spriteTitle:createjs.Sprite;
     private spriteMenuInfo:createjs.Sprite;
+    private spritePauseGameInfo:createjs.Sprite
     private spritePlayGameInfo:createjs.Sprite;
     private spriteFinalScore:createjs.Sprite;
+    private spriteGameOver:createjs.Sprite;
+    private spritePauseScrn:createjs.Sprite;
 
     //init containers
-    private _GUI:createjs.Container;
-    private _MainMenu:createjs.Container;
+    private _gUI:createjs.Container;
+    private _mainMenu:createjs.Container;
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager) {
         
         // inst containers
-        this._GUI = new createjs.Container();
-        this._MainMenu = new createjs.Container();
-        stage.addChild(this._MainMenu);
+        this._gUI = new createjs.Container();
+        this._mainMenu = new createjs.Container();
+        stage.addChild(this._mainMenu);
     
         //inst private fields
-        this.spriteMenuInfo = assetManager.getSprite("assets", "Display/Instructions/clickAnywhereToStart", STAGE_WIDTH/2, (STAGE_HEIGHT/4)*3);
-        this.spriteMenuInfo.scaleX = 2.5;
+        this.spriteTitle = assetManager.getSprite("assets", "Display/Title", STAGE_WIDTH/2, (STAGE_HEIGHT/4));
+        this.spriteTitle.scaleX = 1.7;
+        this.spriteTitle.scaleY = 1.5;
+        this.spriteTitle.play();
+        this._mainMenu.addChild(this.spriteTitle);
+
+        this.spriteMenuInfo = assetManager.getSprite("assets", "Display/ClickToStart", STAGE_WIDTH/2, (STAGE_HEIGHT/4)*3);
+        this.spriteMenuInfo.scaleX = 2;
         this.spriteMenuInfo.scaleY = 2;
         this.spriteMenuInfo.play();
-        this._MainMenu.addChild(this.spriteMenuInfo);
+        this._mainMenu.addChild(this.spriteMenuInfo);
 
-        this.spritePlayGameInfo = assetManager.getSprite("assets", "Display/Instructions/clickAndHoldPlayer", STAGE_WIDTH/2+50, (STAGE_HEIGHT/4)*3-55);
+        this.spritePauseGameInfo = assetManager.getSprite("assets", "Display/Instructions/Press P", (STAGE_WIDTH/3-18), (STAGE_HEIGHT/4)*3-40);
+        this.spritePauseGameInfo.scaleX = 2;
+        this.spritePauseGameInfo.scaleY = 2;
+        this.spritePauseGameInfo.visible = false;
+        stage.addChild(this.spritePauseGameInfo);
+
+        this.spritePlayGameInfo = assetManager.getSprite("assets", "Display/Instructions/clickAndHold", STAGE_WIDTH/2+60, (STAGE_HEIGHT/4)*3-50);
         this.spritePlayGameInfo.scaleX = 2;
         this.spritePlayGameInfo.scaleY = 2;
         this.spritePlayGameInfo.visible = false;
@@ -50,12 +66,28 @@ export default class ScreenManager {
         this.spriteFinalScore.scaleY = 3;
         this.spriteFinalScore.visible = false;
         stage.addChild(this.spriteFinalScore);
+
+        this.spriteGameOver = assetManager.getSprite("assets", "Display/GameOver",  STAGE_WIDTH/2, (STAGE_HEIGHT/4)*3);
+        this.spriteGameOver.scaleX = 3;
+        this.spriteGameOver.scaleY = 3;
+        this.spriteGameOver.play();
+        this.spriteGameOver.visible = false;
+        stage.addChild(this.spriteGameOver);
+
+        this.spritePauseScrn = assetManager.getSprite("assets", "Display/Paused");
+        this.spritePauseScrn.scaleX = 16;
+        this.spritePauseScrn.scaleY = 15;
+        this.spritePauseScrn.alpha = .5;
+        this.spritePauseScrn.play();
+        this.spritePauseScrn.visible = false;
+        stage.addChild(this.spritePauseScrn);
     }
     
     // ----- gets/sets
-    get GUI():createjs.Container { return this._GUI; }
-    get MainMenu():createjs.Container { return this._MainMenu; }
+    get GUI():createjs.Container { return this._gUI; }
+    get MainMenu():createjs.Container { return this._mainMenu; }
     get SpritePlayGameInfo():createjs.Sprite { return this.spritePlayGameInfo; }
+    get SpritePauseGameInfo():createjs.Sprite { return this.spritePauseGameInfo }
 
     // ----- private Methods
     private CheckAndScaleStageFromPlayer(player:Player, platformM:PlatformManager, itemM:ItemManager, enemyM:EnemyManager) {
@@ -89,45 +121,52 @@ export default class ScreenManager {
             
             case GAMESTATE.GAMEPLAY:
                 this.CheckAndScaleStageFromPlayer(player, platformM, itemM, enemyM);
-                stage.addChild(this._GUI);
+                stage.addChild(this._gUI);
+                this.spritePauseScrn.visible = false;
                 break;
 
             case GAMESTATE.RETRY:
                 break;
                 
             case GAMESTATE.NEWGAME:    
-                this._GUI.getChildAt(GUI.LIFE).visible = true;
+                this._gUI.getChildAt(GUI.LIFE).visible = true;
                 //this._GUI.getChildAt(GUI.INVENTORY).visible = true;
-                this._GUI.getChildAt(GUI.SCORE).visible = true;
+                this._gUI.getChildAt(GUI.SCORE).visible = true;
                 player.GainLife(3);
                 platformM.SetupStart();
                 itemM.SetupStart();
                 enemyM.SetupStart();
                 player.sprite.visible = true;
                 this.spritePlayGameInfo.visible = true;
-                this._GUI.addChild(Inventory.display);
+                this.spritePauseGameInfo.visible = true;
+                this._gUI.addChild(Inventory.display);
+                break;
+
+            case GAMESTATE.PAUSED:   
+                this.spritePauseScrn.visible = true;
                 break;
                     
             case GAMESTATE.MAINMENU:
-                this._GUI.getChildAt(GUI.SCORE).visible = false;
-                this._GUI.getChildAt(GUI.SCORE).x = STAGE_WIDTH-this._GUI.getChildAt(GUI.SCORE).getBounds().width*2;
-                this._GUI.getChildAt(GUI.SCORE).y = 5
-                this._GUI.getChildAt(GUI.SCORE).scaleX = 1;
-                this._GUI.getChildAt(GUI.SCORE).scaleY = 1;
+                this._gUI.getChildAt(GUI.SCORE).visible = false;
+                this._gUI.getChildAt(GUI.SCORE).x = STAGE_WIDTH-this._gUI.getChildAt(GUI.SCORE).getBounds().width*2;
+                this._gUI.getChildAt(GUI.SCORE).y = 5
+                this._gUI.getChildAt(GUI.SCORE).scaleX = 1;
+                this._gUI.getChildAt(GUI.SCORE).scaleY = 1;
                 this.MainMenu.visible = true;
                 this.spriteFinalScore.visible = false;
+                this.spriteGameOver.visible = false;
                 break;
                         
             case GAMESTATE.GAMEOVER:
-                this._GUI.getChildAt(GUI.SCORE).x = STAGE_WIDTH/2-this._GUI.getChildAt(GUI.SCORE).getBounds().width;
-                this._GUI.getChildAt(GUI.SCORE).y = STAGE_HEIGHT/2.5-this._GUI.getChildAt(GUI.SCORE).getBounds().height;
-                this._GUI.getChildAt(GUI.SCORE).scaleX = 2.5;
-                this._GUI.getChildAt(GUI.SCORE).scaleY = 2.5;
-                this._GUI.getChildAt(GUI.LIFE).visible = false;
+                this._gUI.getChildAt(GUI.SCORE).x = STAGE_WIDTH/2-this._gUI.getChildAt(GUI.SCORE).getBounds().width;
+                this._gUI.getChildAt(GUI.SCORE).y = STAGE_HEIGHT/2.5-this._gUI.getChildAt(GUI.SCORE).getBounds().height;
+                this._gUI.getChildAt(GUI.SCORE).scaleX = 2.5;
+                this._gUI.getChildAt(GUI.SCORE).scaleY = 2.5;
+                this._gUI.getChildAt(GUI.LIFE).visible = false;
                 
                 //remove inventory display
                 Inventory.RestartInventory();
-                this._GUI.removeChild(Inventory.display);
+                this._gUI.removeChild(Inventory.display);
                 //this._GUI.getChildAt(GUI.INVENTORY).visible = false;
                 
                 //remove platforms
@@ -146,6 +185,7 @@ export default class ScreenManager {
                 }
                 
                 this.spriteFinalScore.visible = true;
+                this.spriteGameOver.visible = true;
                 player.sprite.gotoAndPlay("Astronaught/idle-Color");
                 player.sprite.visible = false;
                 break;

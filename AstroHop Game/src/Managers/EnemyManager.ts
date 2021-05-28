@@ -1,8 +1,9 @@
+import EyeWalker from "../Characters/Enemies/EyeWalker";
+import Slime from "../Characters/Enemies/Slime";
 import Spike from "../Characters/Enemies/Spike";
 import Enemy from "../Characters/Enemy";
 import Player from "../Characters/Player";
-import { STAGE_HEIGHT, STAGE_WIDTH } from "../Constants";
-import Item from "../Objects/Item";
+import { STAGE_HEIGHT } from "../Constants";
 import { randomMe } from "../Toolkit";
 import AssetManager from "./AssetManager";
 import PlatformManager from "./PlatformManager";
@@ -35,9 +36,9 @@ export default class EnemyManager {
     // ----- private fields
     private Create(platformM:PlatformManager) {
         let created:boolean = true;
-        if (platformM.platforms[platformM.platforms.length-1].sprite.y <= -5) {
+        if (platformM.platforms[platformM.platforms.length-1].sprite.y <= -10 && !platformM.platforms[platformM.platforms.length-1].enemyFree) {
 
-            this.decideSpawned = randomMe(0, 100)
+            this.decideSpawned = randomMe(0, 70)
             if (this.decideSpawned == 1) {
                 this.enemyMaker = new Spike(this.stage, this.assetManager);
                 this.enemyMaker.positionMe(
@@ -47,6 +48,25 @@ export default class EnemyManager {
                         (platformM.platforms[platformM.platforms.length-1].sprite.x+(platformM.platforms[platformM.platforms.length-1].sprite.getBounds().width/3))),
                     //Y
                     platformM.platforms[platformM.platforms.length-1].sprite.y);
+            }
+            else if (this.decideSpawned == 2) {
+                this.enemyMaker = new Slime(this.stage, this.assetManager);
+                this.enemyMaker.positionMe(
+                    //X
+                    platformM.platforms[platformM.platforms.length-1].sprite.x,
+                    //Y
+                    platformM.platforms[platformM.platforms.length-1].sprite.y);
+            }
+            else if (this.decideSpawned == 3) {
+                this.enemyMaker = new EyeWalker(this.stage, this.assetManager);
+                this.enemyMaker.positionMe(
+                    //X
+                    platformM.platforms[platformM.platforms.length-1].sprite.x,
+                    //Y
+                    platformM.platforms[platformM.platforms.length-1].sprite.y);
+                this.enemyMaker.Special();
+                platformM.platforms[platformM.platforms.length-1].scaleMe(1.5);
+                platformM.platforms[platformM.platforms.length-1].sprite.scaleX = 2;
             }
             else { created = false; }
             
@@ -67,7 +87,7 @@ export default class EnemyManager {
     //#region  Screenmananger checks
     private CheckToCreate(platformM:PlatformManager) {
         if (this._enemies[this._enemies.length-1].sprite.y > 100) { 
-            if (randomMe(1, 3) <= 3) {
+            if (randomMe(1, 100) <= 3) {
                 this.Create(platformM);
             }
             if (this._enemies[this._enemies.length-1].sprite.y > 550) {

@@ -4,11 +4,10 @@ import Player from "../../Characters/Player";
 import { DIRECTION } from "../../Characters/GameCharacter";
 import { PLATFORM_MOVING_SCOREVALUE as SCOREVALUE, PLATFORM_MOVING_SPEED as SPEED, STAGE_WIDTH } from "../../Constants";
 
-    //init speed level const
-    const POWER_MAX:number    = 12;
-    const POWER_STRONG:number = 8;
-    const POWER_MEDIUM:number = 5.5;
-    const POWER_LOW:number    = 1.7;
+const POWER_MAX:number = 12;
+const POWER_STRONG:number = 8;
+const POWER_MEDIUM:number = 5.5;
+const POWER_LOW:number = 1.7;
 
 export default class Moving extends Platform {
     
@@ -26,6 +25,7 @@ export default class Moving extends Platform {
 
         //inst protected fields
         this._scoreValue = SCOREVALUE;
+        this._enemyFree = true;
 
         //inst private fields
         this._direction = DIRECTION.LEFT; // starts left cause people read left to right, could be changed to a random eq

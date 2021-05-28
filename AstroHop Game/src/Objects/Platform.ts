@@ -10,6 +10,7 @@ export default class Platform extends GameObject {
     
     // protected fields
     protected _scoreValue:number; // the worth of a platform defaults to 1
+    protected _enemyFree:boolean // enemies wont spawn on this platform 
 
     // events
     public eventPlayerOnPlatform:createjs.Event; // platform event called in player class on hit
@@ -33,6 +34,7 @@ export default class Platform extends GameObject {
     }   
 
     // ----- gets/sets
+    get enemyFree():boolean { return this._enemyFree; }
     get landOnce():boolean {
         return this._landOnce;
     }

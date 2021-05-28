@@ -10,7 +10,7 @@ export default class Sticky extends Platform {
     
     //inst private fields
     constructor(stage:createjs.StageGL, assetManager:AssetManager) {
-        super(stage, assetManager, "placeholderPlatform");
+        super(stage, assetManager, "Platforms/SlimeRock2");
         
         //inst protected fields
         this._scoreValue = SCOREVALUE;

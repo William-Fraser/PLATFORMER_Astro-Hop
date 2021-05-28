@@ -120,12 +120,19 @@ export default class InventorySystem {
         }
     }
     public RestartInventory() {
-        this._savedItemDisplayOnce = null;
-        if (this._savedItemHold.sprite.isVisible() == true) {
-            this._savedItemHold.sprite.visible = false;
+        //check to set each value to prevent err
+
+        if (this._savedItemDisplayOnce != null) {
+            this._savedItemDisplayOnce = null;
         }
-        this._savedItemHold = null;
-        this._activeItemHold = null;
+        if (this._savedItemHold != null) {
+            this._savedItemHold.sprite.visible = false;
+            this._savedItemHold = null;
+        }
+        if (this._activeItemHold != null) {
+            this._activeItemHold.sprite.visible = false;
+            this._activeItemHold = null;
+        }
         console.log("nulling inventory");
     }
 

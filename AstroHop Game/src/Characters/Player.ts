@@ -93,12 +93,12 @@ export default class Player extends GameCharacter {
         hud.addChildAt(this.lifeStatus, GUI.LIFE); // add container to container
         //#endregion
         //#region Create Sprite for run animation
-        this.titleRun = assetManager.getSprite("assets", "Astronaught/sideRunning", 0, 0);
+        this.titleRun = assetManager.getSprite("assets", "Astronaught/Running", 0, 0);
         this.titleRun.play();
         this.titleRun.scaleX = 2.3;
         this.titleRun.scaleY = 2.3;
         this.titleRun.x = STAGE_WIDTH/2;
-        this.titleRun.y =  STAGE_HEIGHT/2+this.titleRun.getBounds().height; 
+        this.titleRun.y =  STAGE_HEIGHT/2+50; 
                 
         mainMenu.addChild(this.titleRun);
         //#endregion
@@ -141,7 +141,10 @@ export default class Player extends GameCharacter {
             //set to animation when it's time to jump so it starts once
             if (this._activeItem == TYPE.JETPACK) {
                 this._sprite.gotoAndStop("Astronaught/Rocketman");
-            } else {
+            } 
+            else if (this._activeItem == TYPE.MOONSHOES) {
+                this._sprite.gotoAndPlay("Astronaught/Jumping-MoonShoes");
+            }else {
                 this._sprite.gotoAndPlay("Astronaught/Jump");
             } 
 
@@ -173,7 +176,11 @@ export default class Player extends GameCharacter {
     }
     private Fall() {
         if (this._timeToFall) {
-            this._sprite.gotoAndPlay("Astronaught/falling");
+            if (this._activeItem == TYPE.MOONSHOES) {
+                this._sprite.gotoAndPlay("Astronaught/Falling-MoonShoes");
+            }else {
+                this._sprite.gotoAndPlay("Astronaught/falling");
+            } 
             this._timeToFall = false;
             if (this._jumpWeight != PLAYER_WEIGHT) {
                 this._jumpWeight = PLAYER_WEIGHT
